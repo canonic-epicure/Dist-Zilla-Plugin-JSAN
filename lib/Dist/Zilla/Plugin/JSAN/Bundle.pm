@@ -6,6 +6,8 @@ use Moose;
 
 with 'Dist::Zilla::Role::FileGatherer';
 
+use Dist::Zilla::File::FromCode;
+
 use JSON 2;
 use Module::Build::JSAN::Installable;
 use Path::Class;

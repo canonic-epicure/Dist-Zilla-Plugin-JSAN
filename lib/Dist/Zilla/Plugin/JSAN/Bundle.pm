@@ -1,6 +1,6 @@
-package Dist::Zilla::Plugin::JSAN::Prereq;
+package Dist::Zilla::Plugin::JSAN::Bundle;
 
-# ABSTRACT: list simple prerequisites in JavaScript naming convention
+# ABSTRACT: Bundle 
 
 use Moose;
 

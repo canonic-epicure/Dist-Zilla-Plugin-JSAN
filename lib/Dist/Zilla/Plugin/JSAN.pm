@@ -1,6 +1,10 @@
 package Dist::Zilla::Plugin::JSAN;
 
 use Moose;
+use Moose::Autobox;
+
+use Path::Class;
+use Dist::Zilla::File::InMemory;
 
 extends 'Dist::Zilla::Plugin::ModuleBuild';
 
@@ -15,13 +19,15 @@ has 'mb_class' => (
 has 'docs_markup' => (
     isa     => 'Str',
     is      => 'rw',
-    default => 'pod'
+    default => 'mmd'
 );
 
 
-sub customize_module_build_args {
-    
-}
+has 'static_dir' => (
+    isa     => 'Str',
+    is      => 'rw',
+    default => 'static'
+);
 
 
 sub _use_custom_class {
@@ -48,6 +54,228 @@ sub test {
 #
 #  return;
 }
+
+
+#==================================================================================================
+# Copied from Dist::Zilla::Plugin::MetaJSON
+
+with 'Dist::Zilla::Role::FileGatherer';
+
+use CPAN::Meta::Converter 2.101550; # improved downconversion
+use CPAN::Meta::Validator 2.101550; # improved downconversion
+use Dist::Zilla::File::FromCode;
+use Hash::Merge::Simple ();
+use JSON 2;
+
+
+has version => (
+  is  => 'ro',
+  isa => 'Num',
+  default => '1.4',
+);
+
+
+sub add_meta_json {
+  my ($self, $arg) = @_;
+
+  my $zilla = $self->zilla;
+
+  my $file  = Dist::Zilla::File::FromCode->new({
+    name => 'META.json',
+    code => sub {
+      my $distmeta  = $zilla->distmeta;
+
+      my $validator = CPAN::Meta::Validator->new($distmeta);
+
+      unless ($validator->is_valid) {
+        my $msg = "Invalid META structure.  Errors found:\n";
+        $msg .= join( "\n", $validator->errors );
+        $self->log_fatal($msg);
+      }
+
+      my $converter = CPAN::Meta::Converter->new($distmeta);
+      
+      my $output    = $converter->convert(version => $self->version);
+      
+      # the solely purpose of the copy-paste from Dist::Zilla::Plugin::MetaJSON
+      $output->{ static_dir } = $self->static_dir;
+
+      JSON->new->ascii(1)->canonical(1)->pretty->encode($output) . "\n";
+    },
+  });
+
+  $self->add_file($file);
+  
+  return;
+}
+
+# EOF Copied from Dist::Zilla::Plugin::MetaJSON
+#==================================================================================================
+
+
+#================================================================================================================================================================================================================================================
+sub gather_files {
+    my $self = shift;
+    
+    $self->add_meta_json();
+    
+    my $markup = $self->docs_markup;
+    
+    my $method = "generate_docs_from_$markup";
+    
+    $self->$method();
+}
+
+
+#================================================================================================================================================================================================================================================
+sub generate_docs_from_md {
+    my $self = shift;
+    
+    require Text::Markdown;
+    
+    $self->extract_inlined_docs({
+        html => \sub {
+            my ($comments, $content) = @_;
+            return (Text::Markdown::markdown($comments), 'html')
+        },
+        
+        md => \sub {
+            my ($comments, $content) = @_;
+            return ($comments, 'md');
+        }
+    })
+}
+
+
+#================================================================================================================================================================================================================================================
+sub generate_docs_from_mmd {
+    my $self = shift;
+    
+    require Text::MultiMarkdown;
+    
+    $self->extract_inlined_docs({
+        html => sub {
+            my ($comments, $content) = @_;
+            return (Text::MultiMarkdown::markdown($comments), 'html')
+        },
+        
+        mmd => sub {
+            my ($comments, $content) = @_;
+            return ($comments, 'mmd');
+        }
+    })
+}
+
+
+#================================================================================================================================================================================================================================================
+sub generate_docs_from_pod {
+    my $self = shift;
+    
+    require Pod::Simple::HTML;
+    require Pod::Simple::Text;
+    require Pod::Select;
+    
+    $self->extract_inlined_docs({
+        html => sub {
+            my ($comments, $content) = @_;
+            
+            my $result  = '';
+            my $parser  = Pod::Simple::HTML->new;
+            
+            $parser->output_string( \$result );
+            
+            $parser->parse_string_document($content);
+            
+            return ($result, 'html')
+        },
+        
+        
+        txt => sub {
+            my ($comments, $content) = @_;
+            
+            my $result  = '';
+            my $parser  = Pod::Simple::Text->new;
+            
+            $parser->output_string( \$result );
+            
+            $parser->parse_string_document($content);
+            
+            return ($result, 'txt')
+        },
+        
+        
+        pod => sub {
+            my ($comments, $content) = @_;
+            
+            # XXX really extract pod using Pod::Select and temporary file
+            return ($content, 'pod');
+        }
+    })
+}
+
+
+#================================================================================================================================================================================================================================================
+sub find_dist_packages {
+  my ($self) = @_;
+
+  return $self->zilla->files->grep(sub { $_->name =~ m!^lib/.+\.js$! });
+}
+
+
+#================================================================================================================================================================================================================================================
+sub extract_inlined_docs {
+    my ($self, $convertors) = @_;
+    
+    my $markup      = $self->docs_markup;
+    my $lib_dir     = dir('lib');
+    my $js_files    = $self->find_dist_packages;
+    
+    
+    foreach my $file (map { $_->name } @$js_files) {
+        (my $separate_docs_file = $file) =~ s|\.js$|.$markup|;
+        
+        my $content         = file($file)->slurp;
+        
+        my $docs_content    = -e $separate_docs_file ? file($separate_docs_file)->slurp : $self->strip_doc_comments($content);
+
+
+        foreach my $format (keys(%$convertors)) {
+            
+            #receiving formatted docs
+            my $convertor = $convertors->{$format};
+            
+            my ($result, $result_ext) = &$convertor($docs_content, $content);
+            
+            
+            #preparing 'doc' directory for current format 
+            my $format_dir = dir('doc', $format);
+            
+            #saving results
+            (my $res = $file) =~ s|^$lib_dir|$format_dir|;
+            
+            $res =~ s/\.js$/.$result_ext/;
+            
+            $self->add_file(Dist::Zilla::File::InMemory->new(
+                name        => $res,
+                content     => $result
+            ));
+        }
+    }
+}
+
+
+
+#================================================================================================================================================================================================================================================
+sub strip_doc_comments {
+    my ($self, $content) = @_;
+    
+    my @comments = ($content =~ m[^\s*/\*\*(.*?)\*/]msg);
+    
+    return join '', @comments; 
+}
+
+
+
 
 __PACKAGE__->meta->make_immutable;
 no Moose;

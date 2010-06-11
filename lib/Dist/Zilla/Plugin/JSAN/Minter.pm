@@ -7,7 +7,7 @@ use Moose;
 extends 'Dist::Zilla::Plugin::GatherDir::Template';
 
 with 'Dist::Zilla::Role::FilePruner';
-#with 'Dist::Zilla::Role::FileGatherer';
+with 'Dist::Zilla::Role::FileMunger';
 
 #use Dist::Zilla::File::FromCode;
 #
@@ -38,6 +38,32 @@ sub prune_files {
     } @$files;
 
     return;
+}
+
+
+sub dist_name {
+    my ($self) = @_;
+    
+    my $name = $self->zilla->name;
+    
+    $name =~ s/-/\./g;
+    
+    return $name;
+}
+
+
+sub munge_file {
+    my ($self, $file) = @_;
+    
+    return unless $file->name =~ m|^lib/Module/Stub\.(.+)$|;
+    
+    my $ext     = $1;
+    my $name    = $self->zilla->name;
+    
+    $name       =~ s|-|/|g;
+    
+    
+    $file->name("lib/$name.$ext")
 }
 
 

@@ -87,7 +87,8 @@ GETTING HELP
 
 This extension is supported via github issues tracker: <http://github.com/SamuraiJack/Module-Stub/issues>
 
-For general Joose questions you can also visit #joose on irc.freenode.org or the forum at: <http://joose.it/forum>
+For general Joose questions you can also visit [#joose](http://webchat.freenode.net/?randomnick=1&channels=joose&prompt=1) 
+on irc.freenode.org or the forum at: <http://joose.it/forum>
  
 
 
@@ -111,7 +112,7 @@ Please report any bugs through the web interface at <http://github.com/SamuraiJa
 AUTHORS
 =======
 
-{{ $OUT .= $_ foreach (@{$dist->authors}) }}
+{{ $OUT .= $_ . "\n" foreach (@{$dist->authors})  }}
 
 
 

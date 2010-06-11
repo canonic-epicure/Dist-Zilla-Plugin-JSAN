@@ -2,12 +2,11 @@ COMPONENTS = {
 	// a comment
 	
 	"Core" : [
-		"Module.Stub",
-		"Module.Stub.Class"
+		"{{ $plugin->dist_name }}"
 	],
 	
     
-    "CoreWithJoose" : [
+    "Bundle" : [
     	"+Core",
     	"jsan:Task.Joose.Core"
     ]

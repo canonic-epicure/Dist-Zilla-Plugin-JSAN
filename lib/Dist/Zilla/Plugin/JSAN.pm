@@ -223,6 +223,14 @@ sub find_dist_packages {
 
 
 #================================================================================================================================================================================================================================================
+sub find_file {
+    my ($self, $file_name) = @_;
+    
+    return ( $self->zilla->files->grep(sub { $_->name eq $file_name }) )->[0];
+}
+
+
+#================================================================================================================================================================================================================================================
 sub extract_inlined_docs {
     my ($self, $convertors) = @_;
     
@@ -231,12 +239,14 @@ sub extract_inlined_docs {
     my $js_files    = $self->find_dist_packages;
     
     
-    foreach my $file (map { $_->name } @$js_files) {
-        (my $separate_docs_file = $file) =~ s|\.js$|.$markup|;
+    foreach my $file (@$js_files) {
+        (my $separate_docs_file_name = $file->name) =~ s|\.js$|.$markup|;
         
-        my $content         = file($file)->slurp;
+        my $separate_docs_file   = $self->find_file($separate_docs_file_name);
         
-        my $docs_content    = -e $separate_docs_file ? file($separate_docs_file)->slurp : $self->strip_doc_comments($content);
+        my $content         = $file->content;
+        
+        my $docs_content    = $separate_docs_file ? $separate_docs_file->content : $self->strip_doc_comments($content);
 
 
         foreach my $format (keys(%$convertors)) {
@@ -251,7 +261,7 @@ sub extract_inlined_docs {
             my $format_dir = dir('doc', $format);
             
             #saving results
-            (my $res = $file) =~ s|^$lib_dir|$format_dir|;
+            (my $res = $file->name) =~ s|^$lib_dir|$format_dir|;
             
             $res =~ s/\.js$/.$result_ext/;
             

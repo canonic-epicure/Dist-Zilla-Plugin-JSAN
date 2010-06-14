@@ -9,15 +9,13 @@ use Path::Class;
 use Test::DZil;
 
 {
-    $ENV{JSANLIB} = dir('build', 'jsan') . '';
+    $ENV{JSANLIB} = dir('test_data', 'Bundle', 'jsan')->absolute() . '';
     
     my $tzil = Dist::Zilla::Tester->from_config(
         { dist_root => 'test_data/Bundle' },
     );
 
     $tzil->build;
-    
-    my $contents = $tzil->slurp_file('build/README');
     
     my $even_content            = $tzil->slurp_file(file(qw(build lib Task Digest MD5 Even.js)));
     my $odd_content             = $tzil->slurp_file(file(qw(build lib Task Digest MD5 Odd.js)));
@@ -35,32 +33,5 @@ use Test::DZil;
     ok($part21 =~ /jsan1;\s+part23;\s+jsan2;\s+part22;\s+part21;\s+jsan4;/s, '`Part21` bundle is correct');    
 
 }
-
-#{
-#  my $tzil = Dist::Zilla::Tester->from_config(
-#    { dist_root => 'corpus/DZT' },
-#    {
-#      add_files => {
-#        'source/dist.ini' => simple_ini(
-#          'GatherDir', [ 'ModuleBuild' => { mb_class => 'Foo::Build' } ],
-#        ),
-#      },
-#    },
-#  );
-#
-#  $tzil->build;
-#
-#  my $modulebuild = $tzil->plugin_named('ModuleBuild');
-#
-#  is(
-#    $modulebuild->_use_custom_class,
-#    q{use lib 'inc'; use Foo::Build;},
-#    'loads custom class from inc'
-#  );
-#
-#  my $build = $tzil->slurp_file('build/Build.PL');
-#
-#  like($build, qr/\QFoo::Build->new/, 'Build.PL calls ->new on Foo::Build');
-#}
 
 done_testing;

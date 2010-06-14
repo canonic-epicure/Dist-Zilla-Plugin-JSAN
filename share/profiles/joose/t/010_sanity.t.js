@@ -4,12 +4,12 @@ StartTest(function(t) {
     
     var async0 = t.beginAsync()
     
-    use('Module.Stub', function () {
+    use('{{ $plugin->dist_name }}', function () {
         
         //======================================================================================================================================================================================================================================================
         t.diag('Sanity')
         
-        t.ok(Module.Stub, "Module.Stub is here")
+        t.ok({{ $plugin->dist_name }}, "{{ $plugin->dist_name }} is here")
         
         t.endAsync(async0)
     })

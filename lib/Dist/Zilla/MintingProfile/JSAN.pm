@@ -1,6 +1,6 @@
 package Dist::Zilla::MintingProfile::JSAN;
 use Moose;
-with 'Dist::Zilla::Role::MintingProfile';
+with 'Dist::Zilla::Role::MintingProfile::ShareDir';
 
 =head1 DESCRIPTION
 

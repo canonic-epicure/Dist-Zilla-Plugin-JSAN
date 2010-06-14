@@ -21,12 +21,22 @@ sub gather_files {
     my $readme_file     = $zilla->files->grep(sub { $_->name eq $doc_file_md || $_->name eq $doc_file_mmd });
     
     if (@$readme_file) {
+        my $readme_content = $readme_file->[0]->content;
+        
         $self->add_file(Dist::Zilla::File::InMemory->new({
             
             name    => 'README.md',
             
-            content => $readme_file->[0]->content
+            content => $readme_content
         }));
+        
+        
+        my $fh          = file('README.md')->openw;
+        
+        print $fh $readme_content;
+        
+        $fh->close;
+        
     } else {
         $self->SUPER::gather_files()
     }

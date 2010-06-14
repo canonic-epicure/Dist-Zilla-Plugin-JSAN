@@ -66,18 +66,22 @@ with 'Dist::Zilla::Role::Releaser';
 #  return unless my $stash = $self->_credentials_stash_obj;
 #  return $stash->$name;
 #}
-#
-#has user => (
-#  is   => 'ro',
-#  isa  => 'Str',
+
+
+has user => (
+    is          => 'ro',
+    isa         => 'Str',
+    default     => sub { 'AUTHORID' },
+  
 #  lazy => 1,
 #  required => 1,
 #  default  => sub {
 #    my ($self) = @_;
 #    return $self->_credential('username') || $self->pause_cfg->{user};
 #  },
-#);
-#
+);
+
+
 #has password => (
 #  is   => 'ro',
 #  isa  => 'Str',

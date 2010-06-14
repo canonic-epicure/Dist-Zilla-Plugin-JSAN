@@ -17,6 +17,8 @@ use Path::Class;
 sub gather_files {
     my $self = shift;
     
+    return unless -f 'Components.JS';
+    
 	my $components = file('Components.JS')->slurp;
 
 	#removing // style comments

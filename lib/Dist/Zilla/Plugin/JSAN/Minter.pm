@@ -9,10 +9,11 @@ extends 'Dist::Zilla::Plugin::GatherDir::Template';
 with 'Dist::Zilla::Role::FilePruner';
 with 'Dist::Zilla::Role::FileMunger';
 
-#use Dist::Zilla::File::FromCode;
-#
-#use Path::Class;
 
+has 'include_dotfiles' => (
+    is          => 'rw',
+    default     => 1
+);
 
 
 sub exclude_file {

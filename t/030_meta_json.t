@@ -20,7 +20,8 @@ use Test::DZil;
     
     my $meta = decode_json($tzil->slurp_file(file(qw(build META.json))));
     
-    ok($meta->{static_dir} eq 'assets', 'Non-standard name for static dir was saved in META.json');
+    ok($meta->{ static_dir } eq 'assets', 'Non-standard name for static dir was saved in META.json');
+    ok($meta->{ requires }->{ 'Cool.Module' } eq '0.01', 'Requirements are written in META.json in correct format'); 
 }
 
 done_testing;

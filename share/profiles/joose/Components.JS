@@ -7,7 +7,7 @@ COMPONENTS = {
 	
     
     "Bundle" : [
-    	"+Core",
-    	"jsan:Task.Joose.Core"
+    	"jsan:Task.Joose.Core",
+    	"+Core"
     ]
 }

@@ -99,7 +99,16 @@ sub add_meta_json {
       
       # the solely purpose of the copy-paste from Dist::Zilla::Plugin::MetaJSON
       $output->{ static_dir } = $self->static_dir;
+      
+      if ($output->{ requires }) {
+          $output->{ requires } = $self->replace_colons_with_dots($output->{ requires } )
+      }
 
+      if ($output->{ build_requires }) {
+          $output->{ build_requires } = $self->replace_colons_with_dots($output->{ build_requires })
+      }
+      
+      
       JSON->new->ascii(1)->canonical(1)->pretty->encode($output) . "\n";
     },
   });
@@ -107,6 +116,19 @@ sub add_meta_json {
   $self->add_file($file);
   
   return;
+}
+
+
+sub replace_colons_with_dots {
+    my ($self, $hash) = @_;
+    
+    my %replaced = map {
+        (my $key = $_) =~ s/::/./g;
+        
+        $key => $hash->{ $_ };
+    } keys %$hash;
+    
+    return \%replaced;
 }
 
 # EOF Copied from Dist::Zilla::Plugin::MetaJSON

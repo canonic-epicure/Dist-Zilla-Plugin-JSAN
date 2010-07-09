@@ -1,6 +1,7 @@
 var Harness
+var isNode		= typeof process != 'undefined' && process.pid
 
-if (typeof process != 'undefined' && process.pid) {
+if (isNode) {
     require('Task/Test/Run/NodeJSBundle')
     
     Harness = Test.Run.Harness.NodeJS
@@ -8,7 +9,7 @@ if (typeof process != 'undefined' && process.pid) {
     Harness = Test.Run.Harness.Browser.ExtJS
         
     
-var INC = [ '../lib', '/jsan' ]
+var INC = (isNode ? require.paths : []).concat('../lib', '/jsan')
 
 
 Harness.configure({

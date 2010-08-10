@@ -1,7 +1,5 @@
 StartTest(function(t) {
     
-	t.plan(1)
-    
     var async0 = t.beginAsync()
     
     use('{{ $plugin->dist_name }}', function () {
@@ -12,5 +10,7 @@ StartTest(function(t) {
         t.ok({{ $plugin->dist_name }}, "{{ $plugin->dist_name }} is here")
         
         t.endAsync(async0)
+        
+        t.done()
     })
 })    

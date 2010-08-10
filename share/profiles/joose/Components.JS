@@ -1,13 +1,13 @@
 COMPONENTS = {
-	// a comment
-	
-	"Core" : [
-		"{{ $plugin->dist_name }}"
-	],
-	
+    // a comment
+    
+    "Core" : [
+        "{{ $plugin->dist_name }}"
+    ],
+    
     
     "Bundle" : [
-    	"jsan:Task.Joose.Core",
-    	"+Core"
+        "jsan:Task.Joose.Core",
+        "+Core"
     ]
 }

@@ -4,7 +4,7 @@ package Dist::Zilla::Plugin::JSAN::Minter;
 
 use Moose;
 
-extends 'Dist::Zilla::Plugin::GatherDir::Template';
+extends 'Dist::Zilla::Plugin::JSAN::GatherDir::Template';
 
 with 'Dist::Zilla::Role::FilePruner';
 with 'Dist::Zilla::Role::FileMunger';

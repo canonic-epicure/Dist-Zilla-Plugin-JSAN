@@ -123,23 +123,69 @@ __PACKAGE__->meta->make_immutable(inline_constructor => 0);
 1;
 
 
-
 =head1 SYNOPSIS
 
 In your F<dist.ini>:
 
-  [JSAN::Prereq]
-  Foo.Bar       = 1.002
-  MRO.Compat    = 10
-  Sub.Exporter  = 0
+    [JSAN::Bundle]
+
+In your F<Components.JS>:
+
+    COMPONENTS = {
+        
+        "Core" : [
+            "KiokuJS.Reference",
+            
+            "KiokuJS.Exception",
+            "KiokuJS.Exception.Network",
+            "KiokuJS.Exception.Format",
+            "KiokuJS.Exception.Overwrite",
+            "KiokuJS.Exception.Update",
+            "KiokuJS.Exception.Remove",
+            "KiokuJS.Exception.LookUp",
+            "KiokuJS.Exception.Conflict"
+        ],
+        
+        
+        "Prereq" : [
+            "=/home/cleverguy/js/some/file.js",
+            "jsan:Task.Joose.Core",
+            "jsan:Task.JooseX.Attribute.Bootstrap",
+            
+            "jsan:Task.JooseX.Namespace.Depended.NodeJS",
+            
+            "jsan:Task.JooseX.CPS.All",
+            "jsan:Data.UUID",
+            "jsan:Data.Visitor"
+        ],
+        
+        
+        "All" : [
+            "+Core",
+            "+Prereq"
+        ]
+    } 
+    
+
 
 =head1 DESCRIPTION
 
-This module adds "fixed" prerequisites to your distribution.  These are prereqs
-with a known, fixed minimum version that doens't change based on platform or
-other conditions. 
+This plugins concatenates several source files into single bundle using the information from Components.JS file.
 
-The only difference from standard [Prereq] plugin is that this plugin
-allows you to use the dot in the prereq name as the namespace delimeter.
+This files contains a simple JavaScript assignment (to allow inclusion via <script> tag) of the JSON structure.
+
+First level entries of the JSON structure defines a bundles. Each bundle is an array of entries. 
+
+Entry, starting with the "=" prefix denotes the file from the filesystem. 
+
+Entry, starting with the "jsan:" prefix denotes the module from the jsan library. See L<Module::Build::JSAN::Installable>.
+
+Entry, starting with the "+" prefix denotes the content of another bundle.
+
+All other entries denotes the javascript files from the "lib" directory. For example entry "KiokuJS.Reference" will be fetched
+as the content of the file "lib/KiokuJS/Reference.js"
+
+All bundles are stored as "lib/Task/Distribution/Name/BundleName.js", assuming the name of the distrubution is "Distribution-Name"
+and name of bundle - "BundleName".
 
 =cut

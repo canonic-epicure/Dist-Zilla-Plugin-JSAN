@@ -2,5 +2,7 @@ Release history for Dist::Zilla::Plugin::JSAN
 
 {{$NEXT}}
 
+0.01_02   2010-08-11 11:17
+
         First version, released on an unsuspecting world.
 

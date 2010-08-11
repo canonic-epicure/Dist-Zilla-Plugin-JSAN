@@ -1,6 +1,9 @@
 package Dist::Zilla::MintingProfile::JSAN;
+
 use Moose;
 with 'Dist::Zilla::Role::MintingProfile::ShareDir';
+
+# ABSTRACT: a profile provider, pointing to the default JSAN distribution profile
 
 =head1 DESCRIPTION
 

@@ -1,5 +1,8 @@
 package Dist::Zilla::Plugin::JSAN;
 
+# ABSTRACT: a plugin for Dist::Zilla for building JSAN distributions
+
+
 use Moose;
 use Moose::Autobox;
 
@@ -316,9 +319,7 @@ no Moose;
 
 __END__
 
-=head1 NAME
 
-Dist::Zilla::Plugin::JSAN - a plugin for Dist::Zilla for building JSAN distributions
 
 
 =head1 SYNOPSIS

@@ -56,6 +56,7 @@ In your F<dist.ini>:
 This plugin will move the "static" directory of your distribution into the "lib" folder, under its
 distribution name. Please refer to L<Module::Build::JSAN::Installable> for details what is a "static" directory. 
 
-Note, that the "static_dir" parameter by itself should be specified for the [JSAN] plugin.
+Note, that the "static_dir" parameter by itself should be specified for the [JSAN] plugin, because its also 
+needed for META.JSON generation.
 
 =cut

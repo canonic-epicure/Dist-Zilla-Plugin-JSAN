@@ -107,7 +107,7 @@ on windows] Each profile is a directory which should at least contain a "profile
 plugins used during new distribution creation.
 
 Probably the easiest way to start a new profile will be to copy the default profile ("joose") and hack on it:
-[TODO: link to "joose" profile"]
+L<http://cpansearch.perl.org/src/NPLATONOV/Dist-Zilla-Plugin-JSAN-0.01_02/share/profiles/joose/>
 
 JSAN::Minter will look for "lib/Module/Stub.*" files in the profile directory and process them as templates.
 The result of processing will be stored as "lib/Distribution/Name.*" (with the same extension).

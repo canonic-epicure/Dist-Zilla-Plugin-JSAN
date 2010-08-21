@@ -358,6 +358,8 @@ In F<dist.ini>:
     docs_markup         = mmd         ; default
     static_dir          = static      ; default
     
+    [JSAN::StaticDir]
+    
     [JSAN::ReadmeFromMD]              ; should be after docs generation
     [JSAN::InstallInstructions]       ; add INSTALL file, describing the installation process
     [JSAN::Bundle]                    ; after docs generation to avoid docs for bundles
@@ -410,7 +412,7 @@ In F<dist.ini>:
 This is a plugin for distribution-management tool L<Dist::Zilla>. It greatly simplifies the release process,
 allowing you to focus on the code itself.
 
-As the installer, this plugin use L<Module::Build::JSAN::Installable>, please RTFM.
+As the installer, this plugin use L<Module::Build::JSAN::Installable>.
 
 
 =head1 PLUGINS
@@ -425,12 +427,14 @@ L<Dist::Zilla::Plugin::JSAN::InstallInstructions> - generates INSTALL file in th
 L<Dist::Zilla::Plugin::JSAN::Bundle> - concatenate individual source files into bundles, based on information from Components.JS file
 
 L<Dist::Zilla::Plugin::JSAN::Prereq> - allows you to specify the dependencies for the distribution, using dot as namespace separator 
+
+L<Dist::Zilla::Plugin::JSAN::StaticDir> - moves the content of the static directory to the distribution folder
  
 
 
 =head1 STARTING A NEW DISTRIBUTION
 
-This plugin allows you to easily start a new JSAN distribution. Read to L<Dist::Zilla::Plugin::JSAN::Minter> know how.
+This plugin allows you to easily start a new JSAN distribution. Read L<Dist::Zilla::Plugin::JSAN::Minter> to know how.
 
 
 =head1 AUTHOR
@@ -444,7 +448,7 @@ L<http://github.com/SamuraiJack/Dist-Zilla-Plugin-JSAN/issues>.
 I will be notified, and then you'll automatically be notified of progress on your bug as I make changes.
 
 
-=head1 SUPPORT
+=head1 SOURCES
 
 This module is stored in an open repository at the following address:
 

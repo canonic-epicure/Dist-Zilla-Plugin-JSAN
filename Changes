@@ -1,6 +1,8 @@
 Release history for Dist::Zilla::Plugin::JSAN
 
 {{$NEXT}}
+
+0.01_04   2010-08-22 17:53
         
         - bundler made FileMunger instead of Gatherer, to allow mungling plugins pre-process files before bundling
         

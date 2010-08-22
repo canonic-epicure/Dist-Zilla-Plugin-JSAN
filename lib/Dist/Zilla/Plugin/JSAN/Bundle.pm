@@ -98,7 +98,11 @@ sub expand_task_entry {
 sub get_component_content {
     my ($self, $component) = @_;
     
-    if ($component =~ /^jsan:(.+)/) {
+    if ((ref $component eq 'HASH') && $component->{ text }) {
+        
+        return $component->{ text };
+    
+    } elsif ($component =~ /^jsan:(.+)/) {
         my @file = (Module::Build::JSAN::Installable->get_jsan_libroot, 'lib', split /\./, $1);
         $file[ -1 ] .= '.js';
         

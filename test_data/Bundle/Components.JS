@@ -31,6 +31,11 @@ COMPONENTS = {
     "Part23" : [
     	"jsan:File1",
     	"Part2.File3",
+        
+        {
+            "text" : "yo!"
+        },
+        
     	"jsan:File2"
     ]
 }

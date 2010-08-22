@@ -5,6 +5,7 @@ package Dist::Zilla::Plugin::JSAN::Bundle;
 use Moose;
 
 with 'Dist::Zilla::Role::FileGatherer';
+with 'Dist::Zilla::Role::FileMunger';
 
 use Dist::Zilla::File::FromCode;
 
@@ -15,22 +16,27 @@ use Path::Class;
 
 #================================================================================================================================================================================================================================================
 sub gather_files {
+}
+
+
+#================================================================================================================================================================================================================================================
+sub munge_files {
     my $self = shift;
     
     return unless -f 'Components.JS';
     
-	my $components = file('Components.JS')->slurp;
+    my $components = file('Components.JS')->slurp;
 
-	#removing // style comments
-	$components =~ s!//.*$!!gm;
+    #removing // style comments
+    $components =~ s!//.*$!!gm;
 
-	#extracting from outermost {} brackets
-	$components =~ m/(\{.*\})/s;
-	$components = $1;
+    #extracting from outermost {} brackets
+    $components =~ m/(\{.*\})/s;
+    $components = $1;
 
-	my $deploys = decode_json $components;
-	
-	$self->concatenate_for_task($deploys, 'all');
+    my $deploys = decode_json $components;
+    
+    $self->concatenate_for_task($deploys, 'all');
 }
 
 
@@ -100,7 +106,11 @@ sub get_component_content {
     } elsif ($component =~ /^=(.+)/) {
         return file($1)->slurp;
     } else {
-        return $self->comp_to_filename($component)->slurp;
+        my $file_name = $self->comp_to_filename($component);
+        
+        my ($found) = grep { $_->name eq $file_name } (@{$self->zilla->files});
+        
+        return $found->content;
     } 
 }
 

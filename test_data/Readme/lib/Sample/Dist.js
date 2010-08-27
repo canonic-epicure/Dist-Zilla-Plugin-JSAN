@@ -1,5 +1,7 @@
 Class('Sample.Dist', {
     
+    /*VERSION,*/
+    
     use : [  ],
     
     

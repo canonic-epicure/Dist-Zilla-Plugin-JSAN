@@ -35,6 +35,8 @@ sub munge_file {
         
         my $version             = $self->zilla->version;
         
+        $version = "'$version'" if $version !~ m/^\d+(\.\d+)?$/;
+        
         $content =~ s!$overall_quoted!${whitespace}VERSION : ${version}${comma}!;
         
         $file->content($content);
@@ -81,10 +83,11 @@ will become after build:
 
 =head1 DESCRIPTION
 
-This plugin will move the "static" directory of your distribution into the "lib" folder, under its
-distribution name. Please refer to L<Module::Build::JSAN::Installable> for details what is a "static" directory. 
+This plugin will replace the 
+    
+    /*VERSION,*/ 
+    
+placeholders with the distribution version. Replacement will be  
 
-Note, that the "static_dir" parameter by itself should be specified for the [JSAN] plugin, because its also 
-needed for META.JSON generation.
 
 =cut

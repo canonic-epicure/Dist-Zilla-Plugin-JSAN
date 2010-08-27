@@ -23,6 +23,18 @@ use Test::DZil;
     
     ok($digest5_content =~ /VERSION : 0.01,/, 'Correctly embedded version #1');
     ok($digest6_content =~ /VERSION : 0.01(?!,)/, 'Correctly embedded version #2');
+    
+    
+    $tzil = Dist::Zilla::Tester->from_config(
+        { dist_root => 'test_data/Readme' },
+    );
+
+    $tzil->build;
+    
+    my $sample_dist_content = $tzil->slurp_file(file(qw(build lib Sample Dist.js))) . "";
+    
+    ok($sample_dist_content =~ /VERSION : '0.1.2',/, 'Correctly embedded version #3');
+    
 }
 
 done_testing;

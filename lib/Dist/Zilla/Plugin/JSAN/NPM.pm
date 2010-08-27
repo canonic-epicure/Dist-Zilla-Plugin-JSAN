@@ -153,7 +153,7 @@ sub gather_files {
             
             $package->{ contributors }  = $self->contributor;
             $package->{ dependencies }  = $self->convert_dependencies($self->dependency);
-            $package->{ engines }       = $self->engine;
+            $package->{ engines }       = $self->convert_engines($self->engine);
             
             $package->{ directories } = {
                 "doc" => "./doc/mmd",
@@ -182,6 +182,24 @@ sub convert_dependencies {
 	} (@$deps);
 	
 	return \%converted;
+}
+
+
+#================================================================================================================================================================================================================================================
+sub convert_engines {
+    my ($self, $engines) = @_;
+    
+    my @converted = map {
+        
+        my $engine = $_;
+        
+        $engine =~ m/^["']?(.*?)["']?$/;
+        
+        $1 || '';
+        
+    } (@$engines);
+    
+    return \@converted;
 }
 
 

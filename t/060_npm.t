@@ -16,11 +16,20 @@ use Test::DZil;
 
     $tzil->build;
     
-    my $build_dir = dir($tzil->tempdir, 'build');
+    my $package = JSON->new->decode($tzil->slurp_file(file(qw(build package.json))) . "");
     
-    my $digest_content = $tzil->slurp_file(file(qw(build lib Digest MD5.js))) . "";
+    ok($package->{ name } eq 'sample-dist', 'Correct package name');
     
-    ok($digest_content =~ /VERSION : 0.01,/, 'Correctly embedded version');
+    ok($package->{ author } eq 'Clever Guy <cleverguy@cpan.org>', 'Correct author');
+    ok($package->{ contributors }->[ 0 ] eq 'Clever Guy2 <cleverguy2@cpan.org>', 'Correct contributors');
+    
+    ok($package->{ description } eq 'Some clever yet compact description', 'Correct description');
+    
+    ok($package->{ main } eq 'lib/Sample/Dist', 'Correct default main module');
+    
+    is_deeply($package->{ dependencies }, { foo => '1.2.3', bar => '4.5.6' }, 'Correct dependencies');
+    
+    is_deeply($package->{ engines }, [ "node >=0.1.27 <0.1.30", "dode >=0.1.27 <0.1.30" ], 'Correct dependencies');
 }
 
 done_testing;

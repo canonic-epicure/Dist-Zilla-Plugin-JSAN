@@ -2,6 +2,8 @@ Release history for Dist::Zilla::Plugin::JSAN
 
 {{$NEXT}}
 
+0.01_05   2010-08-27 22:06
+
         - added PkgVersion plugin
         - added NPM plugin
         - added NPM::Publish plugin

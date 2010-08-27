@@ -9,37 +9,50 @@ use Path::Class;
 with 'Dist::Zilla::Role::FileMunger';
 
 
-sub dist_name_as_dir {
+has 'sources' => (
+    is          => 'rw',
+    
+    default     => '^lib/.*\\.js$'
+);
+
+
+
+sub munge_files {
     my ($self) = @_;
     
-    my $name = $self->zilla->name;
+    my $sources = $self->sources; 
     
-    return (split /-/, $name);
-}
-
-
-sub munge_file {
-    my ($self, $file) = @_;
+    my $regex = qr/$sources/;
     
-    my $content = $file->content;
     
-    if ($content =~ m!
-        ^(?'overall' (?'whitespace'\s*) /\*  VERSION  (?'comma',)?  \*/)  
-    !msx) {
+    for my $file (@{$self->zilla->files}) {
         
-        my $overall             = $+{ overall };
-        my $overall_quoted      = quotemeta $overall;
+        next unless $file->name =~ m/$regex/;
+    
+        my $content             = $file->content;
+        my $content_copy        = $content;
         
-        my $comma               = $+{ comma } || '';
-        my $whitespace          = $+{ whitespace };
+        pos $content = 0;
         
-        my $version             = $self->zilla->version;
         
-        $version = "'$version'" if $version !~ m/^\d+(\.\d+)?$/;
+        while ($content =~ m!
+            (?'overall' (?'whitespace'\s*) /\*  VERSION  (?'comma',)?  \*/)  
+        !msxg) {
+            
+            my $overall             = $+{ overall };
+            my $overall_quoted      = quotemeta $overall;
+            
+            my $comma               = $+{ comma } || '';
+            my $whitespace          = $+{ whitespace };
+            
+            my $version             = $self->zilla->version;
+            
+            $version = "'$version'" if $version !~ m/^\d+(\.\d+)?$/;
+            
+            $content_copy =~ s!$overall_quoted!${whitespace}VERSION : ${version}${comma}!;
+        }
         
-        $content =~ s!$overall_quoted!${whitespace}VERSION : ${version}${comma}!;
-        
-        $file->content($content);
+        $file->content($content_copy) if $content_copy ne $content;
     }
 }
 

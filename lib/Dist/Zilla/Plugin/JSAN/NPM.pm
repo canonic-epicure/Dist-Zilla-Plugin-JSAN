@@ -156,7 +156,7 @@ sub gather_files {
             $package->{ engines }       = $self->engine;
             
             $package->{ directories } = {
-                "doc" => "./doc/md",
+                "doc" => "./doc/mmd",
                 "man" => "./man",
                 "lib" => "./lib"
             };            
@@ -232,5 +232,6 @@ In your F<dist.ini>:
 =head1 DESCRIPTION
 
 JSAN<->npm bridge, which generate the "package.json" file for your distribution, based on the content of "dist.ini"
+
 
 =cut

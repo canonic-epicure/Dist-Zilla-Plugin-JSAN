@@ -1,5 +1,8 @@
 Class('{{ $plugin->dist_name }}', {
     
+    /*VERSION,*/
+    
+    
     use : [  ],
     
     

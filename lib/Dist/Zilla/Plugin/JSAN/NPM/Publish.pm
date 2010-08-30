@@ -15,7 +15,7 @@ sub release {
     my ($self, $archive) = @_;
     
     
-    $self->log(`npm publish $arhive`);
+    $self->log(`npm publish $archive`);
 }
 
 

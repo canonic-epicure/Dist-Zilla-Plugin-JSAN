@@ -36,14 +36,14 @@ sub munge_files {
         
         
         while ($content =~ m!
-            (?'overall' (?'whitespace'\s*) /\*  VERSION  (?'comma',)?  \*/)  
+            ( (\s*) /\*  VERSION  (?'comma',)?  \*/)  
         !msxg) {
             
-            my $overall             = $+{ overall };
+            my $overall             = $1;
             my $overall_quoted      = quotemeta $overall;
             
-            my $comma               = $+{ comma } || '';
-            my $whitespace          = $+{ whitespace };
+            my $comma               = $3 || '';
+            my $whitespace          = $2;
             
             my $version             = $self->zilla->version;
             

@@ -9,13 +9,20 @@ with 'Dist::Zilla::Role::Releaser';
 use Path::Class;
 
 
+has 'sudo' => {
+    is          => 'rw',
+    
+    defaults    => 0
+};
+
 
 #================================================================================================================================================================================================================================================
 sub release {
     my ($self, $archive) = @_;
     
+    my $sudo = $self->sudo ? 'sudo' : '';
     
-    $self->log(`npm publish $archive`);
+    $self->log(`$sudo npm publish $archive`);
 }
 
 
@@ -34,6 +41,7 @@ In your F<dist.ini>:
 
     [JSAN::NPM::Publish]
     
+    sudo = 1             ; add `sudo` to the publish call, defaults to 0
 
 =head1 DESCRIPTION
 

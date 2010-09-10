@@ -175,7 +175,7 @@ sub convert_dependencies {
 	    
 	    my $dep = $_;
 	    
-	    $dep =~ m/"?(\w+)"?\s*:\s*"(.+)"/;
+	    $dep =~ m/"?(.+?)"?\s*:\s*"(.+)"/;
 	    
 	    $1 => $2;
 	    

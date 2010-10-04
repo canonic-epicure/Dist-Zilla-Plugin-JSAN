@@ -19,6 +19,7 @@ use Test::DZil;
     my $package = JSON->new->decode($tzil->slurp_file(file(qw(build package.json))) . "");
     
     ok($package->{ name } eq 'sample-dist', 'Correct package name');
+    ok($package->{ version } eq '0.1.2', 'Leading zeros were stripped out');
     
     ok($package->{ author } eq 'Clever Guy <cleverguy@cpan.org>', 'Correct author');
     ok($package->{ contributors }->[ 0 ] eq 'Clever Guy2 <cleverguy2@cpan.org>', 'Correct contributors');

@@ -33,7 +33,7 @@ use Test::DZil;
     
     my $sample_dist_content = $tzil->slurp_file(file(qw(build lib Sample Dist.js))) . "";
     
-    ok($sample_dist_content =~ /VERSION : '0.1.2',/, 'Correctly embedded version #3');
+    ok($sample_dist_content =~ /VERSION : '0.01.02',/, 'Correctly embedded version #3');
     
 }
 

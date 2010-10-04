@@ -35,6 +35,8 @@ has 'version' => (
         
         $version .= '.0' if $version !~ m!\d+\.\d+\.\d+!;
         
+        $version =~ s/\.0(\d+)/.$1/g;
+        
         return $version
     }
 );

@@ -155,7 +155,8 @@ sub gather_files {
             
             $package->{ contributors }  = $self->contributor;
             $package->{ dependencies }  = $self->convert_dependencies($self->dependency);
-            $package->{ engines }       = $self->convert_engines($self->engine);
+            
+            $package->{ engines }       = $self->convert_engines($self->engine) if @{$self->engine} > 0;
             
             $package->{ directories } = {
                 "doc" => "./doc/mmd",

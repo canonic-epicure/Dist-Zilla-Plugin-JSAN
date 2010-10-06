@@ -19,7 +19,7 @@ Harness.configure({
         "jsan:Task.Joose.Core",
         "jsan:Task.JooseX.Namespace.Depended.Auto",
         {
-            text : "JooseX.Namespace.Depended.Manager.my.INC = " + Joose.is_NodeJS ? JSON.stringify(INC) : Ext.encode(Harness.absolutizeINC(INC))
+            text : "JooseX.Namespace.Depended.Manager.my.INC = " + Harness.prepareINC(INC)
         }
     ]
 })

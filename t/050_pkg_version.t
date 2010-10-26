@@ -10,7 +10,7 @@ use JSON 2;
 use Test::DZil;
 
 {
-    $ENV{JSANLIB} = dir('test_data', 'Bundle', 'jsan')->absolute() . '';
+    $ENV{JSANLIB} = dir('test_data', 'Bundle', 'npm')->absolute() . '';
     
     my $tzil = Dist::Zilla::Tester->from_config(
         { dist_root => 'test_data/Bundle' },

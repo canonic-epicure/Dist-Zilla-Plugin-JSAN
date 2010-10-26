@@ -11,6 +11,7 @@ use Dist::Zilla::File::FromCode;
 
 use JSON 2;
 use Path::Class;
+use Capture::Tiny qw/capture/;
 
 
 #================================================================================================================================================================================================================================================
@@ -123,9 +124,27 @@ sub get_component_content {
 sub get_npm_root {
     my ($self) = @_;
     
+    return $ENV{JSANLIB} if $ENV{JSANLIB};
     
+    my $exit_code;
     
-    return file('lib', @dirs);
+    my ($stdout, $stderr) = capture {
+        system('npm config get root');
+        
+        $exit_code = $? >> 8;
+    };
+    
+    return $stdout unless $exit_code;
+    
+    ($stdout, $stderr) = capture {
+        system('sudo npm config get root');
+        
+        $exit_code = $? >> 8;
+    };
+    
+    return $stdout unless $exit_code;
+    
+    die "Can't determine the `npm` root"; 
 }
 
 

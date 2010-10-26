@@ -209,7 +209,8 @@ In F<dist.ini>:
     name                = Sample-Dist
     abstract            = Some clever yet compact description
     
-    author              = Clever Guy
+    author              = Clever Guy #1
+    author              = Clever Guy #2
     license             = LGPL_3_0
     copyright_holder    = Clever Guy
     
@@ -218,34 +219,34 @@ In F<dist.ini>:
     [BumpVersionFromGit]
     first_version = 0.01 
     
+    ; include the link to git repo and web page
+    [GithubMeta]
     
     ; choose/generate files to include
     
     [GatherDir]
     [PruneCruft]
-    [ManifestSkip]
     [License]
-
-    
-    ; build system
-    
-    [ExecDir]
-    [ShareDir]
     
     
     ; JSAN-specific configuration
-    [JSAN]                            ; includes META.JSON generation
-    docs_markup         = mmd         ; default
-    static_dir          = static      ; default
+    [JSAN]                          ; includes META.JSON generation
+    docs_markup         = mmd       ; default
     
     [JSAN::StaticDir]
+    static_dir          = static    ; default
     
-    [JSAN::ReadmeFromMD]              ; should be after docs generation
-    [JSAN::InstallInstructions]       ; add INSTALL file, describing the installation process
-    [JSAN::Bundle]                    ; after docs generation to avoid docs for bundles
+    [JSAN::PkgVersion]
     
-    ; manifest (after all generated files)
-    [Manifest]
+    [JSAN::ReadmeFromMD]            ; should be after docs generation
+    [JSAN::InstallInstructions]     ; add INSTALL file, describing the installation process
+    [JSAN::Bundle]                  ; after docs generation to avoid docs for bundles
+    
+    [JSAN::NPM]
+    main        = lib/Task/Sample/Dist/Core
+    
+    dependency            = joose >= 3.14.0
+    dependency            = json2 >= 0.2.0
     
     
     ; before release
@@ -253,12 +254,11 @@ In F<dist.ini>:
     [Git::Check]
     [CheckChangesHasContent]
     
-    ; [TestRelease] todo
     [ConfirmRelease]
     
     ; releaser
-    [JSAN::Upload]  ; just a no-op for now
-     
+    [JSAN::NPM::Publish]        ; publish in `npm`
+    sudo = 1                    ; don't repeat at home, seriously
      
     ; after release
     [Git::Commit / Commit_Dirty_Files]
@@ -276,13 +276,7 @@ In F<dist.ini>:
     [Twitter]
     tweet_url     = http://openjsan.org/go/?l={{ '{{ my $dist = $DIST; $dist =~ s/-/./g; $dist; }}' }}
     tweet         = Released {{ '{{$DIST}}-{{$VERSION}} {{$URL}}' }}
-    hash_tags     = #jsan
-       
-    ; prerequisites
-    
-    [JSAN::Prereq]
-    Joose                         = 3.010
-    Cool.Module                   = 0.01
+    hash_tags     = #nodejs #npm
 
 =cut
 
@@ -303,8 +297,6 @@ L<Dist::Zilla::Plugin::JSAN::ReadmeFromMD> - copies a main documentation file to
 L<Dist::Zilla::Plugin::JSAN::InstallInstructions> - generates INSTALL file in the root of distribution with installation instructions
 
 L<Dist::Zilla::Plugin::JSAN::Bundle> - concatenate individual source files into bundles, based on information from Components.JS file
-
-L<Dist::Zilla::Plugin::JSAN::Prereq> - allows you to specify the dependencies for the distribution, using dot as namespace separator 
 
 L<Dist::Zilla::Plugin::JSAN::StaticDir> - moves the content of the static directory to the distribution folder
  

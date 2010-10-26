@@ -261,11 +261,11 @@ In your F<dist.ini>:
     
     main            = 'lib/some/distro'         ; default to main module in distribution
     
-    dependency      = "foo" : "1.0.0 - 2.9999.9999"     ; note the singular spelling
-    dependency      = "bar" : ">=1.0.2 <2.1.2"          ; 
+    dependency      = foo 1.0.0 - 2.9999.9999           ; note the singular spelling
+    dependency      = bar >=1.0.2 <2.1.2                ; 
     
-    engine          = "node >=0.1.27 <0.1.30"           ; note the singular spelling
-    engine          = "dode >=0.1.27 <0.1.30"           ; 
+    engine          = node >=0.1.27 <0.1.30             ; note the singular spelling
+    engine          = dode >=0.1.27 <0.1.30             ; 
 
     
 

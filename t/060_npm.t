@@ -28,7 +28,7 @@ use Test::DZil;
     
     ok($package->{ main } eq 'lib/Sample/Dist', 'Correct default main module');
     
-    is_deeply($package->{ dependencies }, { 'foox-baz' => '>= 1.2.3', 'barx-foo' => '<1.0.0 || >=2.3.1 <2.4.5 || >=2.5.2 <3.0.0' }, 'Correct dependencies');
+    is_deeply($package->{ dependencies }, { 'foox-baz' => '1.0.0 - 2.9999.9999', 'barx-foo' => '<1.0.0 || >=2.3.1 <2.4.5 || >=2.5.2 <3.0.0' }, 'Correct dependencies');
     
     is_deeply($package->{ engines }, [ "node >=0.1.27 <0.1.30", "dode >=0.1.27 <0.1.30" ], 'Correct engines');
 }

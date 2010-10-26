@@ -65,7 +65,7 @@ In your F<dist.ini>:
 =head1 DESCRIPTION
 
 This plugin adds an F<INSTALL> file to the distribution, which describes the installation
-process with JSAN::Shell. 
+process with `npm`
 
 =cut
 
@@ -74,103 +74,35 @@ __DATA__
 __[ INSTALL ]__
 The installation procedure for {{ $plugin->dist_name }}
 
+NPM
+===
 
-JSAN
-====
+`{{ $plugin->dist_name }}` is being distributed via NPM - [Node Package Manager][npm]. Obviously
+it requires the NodeJS to be installed.  
 
-`{{ $plugin->dist_name }}` is distributing via JSAN - [JavaScript Archive Network][jsan]. 
-To install `{{ $plugin->dist_name }}` you'll need to install JSAN shell first - a small,
-cross-platform, unix-shell-like program. It communicate directly with closest JSAN mirror 
-and can download and install any JSAN module for you.
+To install `npm` please follow the instructions on its site. After that, run:
 
-JSAN shell is written in perl, so the 1st step is to obtain Perl.
+        > npm install {{ lc($plugin->dist_name) }}
 
+Thats all, `npm` will download and install `{{ $plugin->dist_name }}` for you. 
 
-1. OBTAINING PERL
-=================
-
-Linux
------
-
-If you are on any relatively modern Linux distribution, you may skip this step, since you 
-already have perl and all required perl modules. 
+For the list of available commands, try `npm help`.  
 
 
-Windows
--------
+CONFIGURING YOUR SYSTEM
+=======================
 
-Windows users should install [Strawberry perl][straberry]. Straberry perl is preferable than 
-ActiveState perl, because it comes with the compiler included.
+If you are planning to use this module in the cross-platform fashion (interoperable between browsers
+and NodeJS), you may want to perform this additional (optional) configuration steps:
 
-*NOTE:* After installation, you may need to relogin (or reboot) to see the updates in the PATH 
-environment variable.
+- Add the `.jsan` subdirectory of the root of your `npm` installation to the NODE_PATH environment variable.
 
+- Configure you local web server in the way, that the url `http://localhost/jsan` will point to the 
+`.jsan` subdirectory of the root of your `npm` installation. 
 
-2. INSTALLING SHELL
-===================
-
-Launch a console (`cmd` on Windows). Then type:
-
-       > cpan JSAN::Shell
+To find the root of `npm` installation run:
     
-Thats all, now wait until shell will be installed. You may be asked about installing 
-its pre-requisites - answer 'yes'. 
-
-
-3. INSTALLING `{{ $plugin->dist_name }}`
-==========================
-
-Launch a console (`cmd` on Windows). Then type:
-    
-        > jsan
-    
-This should launch a JSAN shell and display a prompt, similar to this:
-    
-        Checking for Internet access...
-        Locating closest JSAN mirror...
-        
-        jsan shell -- JSAN repository explorer and package installer (v2.03)
-                   -- Copyright 2005 - 2009 Adam Kennedy.
-                   -- Type 'help' for a summary of available commands.
-        
-        jsan>
-    
-If this is the first time you installing the JSAN module, setup the installation path 
-('prefix' setting can be saved, so you won't need to enter it again):
-        
-        jsan> set prefix /your/installation/path/
-
-Then, type:
-        
-        jsan> install {{ $plugin->dist_name }}
-
-Thats all, shell will download and install `{{ $plugin->dist_name }}` for you. 
-
-For the list of available commands, try `help`. Also refer to 
-[JSAN::Shell documentation](http://search.cpan.org/dist/JSAN-Shell/lib/JSAN/Shell.pm) for details. 
-
-
-4. CONFIGURING YOUR SYSTEM
-==========================
-
-After successful completion of the procedure above, `{{ $plugin->dist_name }}` will be 
-installed in your local JavaScript library (you've specified its location with 'prefix').
-
-For example, the path to the library can be:
-
-- /usr/local/lib/jsan
-
-on Linux systems
-
-- c:\JSAN
-
-on Windows systems.
-
-As a convention, its recommended to configure you local web server (you have one installed, right?) 
-that way, that the root starting url `/jsan` will point at the `lib` subdirectory of 
-JSAN library: `/usr/local/lib/jsan/lib` for example.
-
-This way you can load any installed JSAN module via url like: `/jsan/Useful/Module/Name.js`
+    > npm config get root
 
 
 
@@ -185,5 +117,4 @@ COPYRIGHT AND LICENSE
 
 {{ $dist->license->notice }}
 
-[jsan]: http://openjsan.org
-[straberry]: http://strawberryperl.com/
+[npm]: http://npmjs.org/

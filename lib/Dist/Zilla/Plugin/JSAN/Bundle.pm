@@ -10,7 +10,6 @@ with 'Dist::Zilla::Role::FileMunger';
 use Dist::Zilla::File::FromCode;
 
 use JSON 2;
-use Module::Build::JSAN::Installable;
 use Path::Class;
 
 
@@ -103,7 +102,8 @@ sub get_component_content {
         return $component->{ text };
     
     } elsif ($component =~ /^jsan:(.+)/) {
-        my @file = (Module::Build::JSAN::Installable->get_jsan_libroot, 'lib', split /\./, $1);
+        
+        my @file = ($self->get_npm_root, '.jsan', split /\./, $1);
         $file[ -1 ] .= '.js';
         
         return file(@file)->slurp;
@@ -116,6 +116,16 @@ sub get_component_content {
         
         return $found->content;
     } 
+}
+
+
+#================================================================================================================================================================================================================================================
+sub get_npm_root {
+    my ($self) = @_;
+    
+    
+    
+    return file('lib', @dirs);
 }
 
 

@@ -19,14 +19,6 @@ has 'docs_markup' => (
 );
 
 
-has 'static_dir' => (
-    isa     => 'Str',
-    is      => 'rw',
-    default => 'static'
-);
-
-
-
 
 #================================================================================================================================================================================================================================================
 sub gather_files {
@@ -299,8 +291,6 @@ In F<dist.ini>:
 
 This is a plugin for distribution-management tool L<Dist::Zilla>. It greatly simplifies the release process,
 allowing you to focus on the code itself.
-
-As the installer, this plugin use L<Module::Build::JSAN::Installable>.
 
 
 =head1 PLUGINS

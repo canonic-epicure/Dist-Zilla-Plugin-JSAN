@@ -9,14 +9,7 @@ use Moose::Autobox;
 use Path::Class;
 use Dist::Zilla::File::InMemory;
 
-extends 'Dist::Zilla::Plugin::ModuleBuild';
-
-
-has 'mb_class' => (
-    isa => 'Str',
-    is  => 'rw',
-    default => 'Module::Build::JSAN::Installable',
-);
+with 'Dist::Zilla::Role::FileGatherer';
 
 
 has 'docs_markup' => (
@@ -33,116 +26,11 @@ has 'static_dir' => (
 );
 
 
-sub _use_custom_class {
-    my ($self) = @_;
-    
-    my $class = $self->mb_class;
-    
-    return "use $class;";
-}
-
-
-sub register_prereqs {
-# don't add additional prepreqs as we are in JS land already
-}
-
-
-sub test {
-# do nothing currently
-
-#  my ($self, $target) = @_;
-#
-#  $self->build;
-#  system($^X, 'Build', 'test') and die "error running $^X Build test\n";
-#
-#  return;
-}
-
-
-#==================================================================================================
-# Copied from Dist::Zilla::Plugin::MetaJSON
-
-with 'Dist::Zilla::Role::FileGatherer';
-
-use CPAN::Meta::Converter 2.101550; # improved downconversion
-use CPAN::Meta::Validator 2.101550; # improved downconversion
-use Dist::Zilla::File::FromCode;
-use Hash::Merge::Simple ();
-use JSON 2;
-
-
-has version => (
-  is  => 'ro',
-  isa => 'Num',
-  default => '1.4',
-);
-
-
-sub add_meta_json {
-  my ($self, $arg) = @_;
-
-  my $zilla = $self->zilla;
-
-  my $file  = Dist::Zilla::File::FromCode->new({
-    name => 'META.json',
-    code => sub {
-      my $distmeta  = $zilla->distmeta;
-
-      my $validator = CPAN::Meta::Validator->new($distmeta);
-
-      unless ($validator->is_valid) {
-        my $msg = "Invalid META structure.  Errors found:\n";
-        $msg .= join( "\n", $validator->errors );
-        $self->log_fatal($msg);
-      }
-
-      my $converter = CPAN::Meta::Converter->new($distmeta);
-      
-      my $output    = $converter->convert(version => $self->version);
-      
-      # the solely purpose of the copy-paste from Dist::Zilla::Plugin::MetaJSON
-      $output->{ static_dir } = $self->static_dir;
-      
-      if ($output->{ requires }) {
-          $output->{ requires } = $self->replace_colons_with_dots($output->{ requires } )
-      }
-
-      if ($output->{ build_requires }) {
-          $output->{ build_requires } = $self->replace_colons_with_dots($output->{ build_requires })
-      }
-      
-      
-      JSON->new->ascii(1)->canonical(1)->pretty->encode($output) . "\n";
-    },
-  });
-
-  $self->add_file($file);
-  
-  return;
-}
-
-
-sub replace_colons_with_dots {
-    my ($self, $hash) = @_;
-    
-    my %replaced = map {
-        (my $key = $_) =~ s/::/./g;
-        
-        $key => $hash->{ $_ };
-    } keys %$hash;
-    
-    return \%replaced;
-}
-
-# EOF Copied from Dist::Zilla::Plugin::MetaJSON
-#==================================================================================================
 
 
 #================================================================================================================================================================================================================================================
 sub gather_files {
     my $self = shift;
-    
-    $self->add_meta_json();
     
     my $markup = $self->docs_markup;
     

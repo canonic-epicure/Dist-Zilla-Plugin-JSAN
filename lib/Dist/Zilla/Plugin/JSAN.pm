@@ -230,7 +230,7 @@ In F<dist.ini>:
     
     
     ; JSAN-specific configuration
-    [JSAN]                          ; includes META.JSON generation
+    [JSAN]                          ; generate docs
     docs_markup         = mmd       ; default
     
     [JSAN::StaticDir]
@@ -258,7 +258,7 @@ In F<dist.ini>:
     
     ; releaser
     [JSAN::NPM::Publish]        ; publish in `npm`
-    sudo = 1                    ; don't repeat at home, seriously
+    sudo = 0                    ; default is not to sudo
      
     ; after release
     [Git::Commit / Commit_Dirty_Files]
@@ -274,7 +274,7 @@ In F<dist.ini>:
     push_to = origin
     
     [Twitter]
-    tweet_url     = http://openjsan.org/go/?l={{ '{{ my $dist = $DIST; $dist =~ s/-/./g; $dist; }}' }}
+    tweet_url     = http://cleverguy.github.com/sample-dist/
     tweet         = Released {{ '{{$DIST}}-{{$VERSION}} {{$URL}}' }}
     hash_tags     = #nodejs #npm
 

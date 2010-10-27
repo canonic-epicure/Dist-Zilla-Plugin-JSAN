@@ -146,14 +146,15 @@ no Moose;
 In your F<dist.ini>:
 
     [JSAN::GitHubDocs]
-    extract             = doc/html         ; default value
-    redirect_prefix     = doc/html
+    extract             = doc/html          ; default value
+    redirect_prefix     = doc/html          ; default value
     push_to             = origin            ; default value
     
 
 =head1 DESCRIPTION
 
-After each release, this plugin will extract the content of tarball to the 'gh-pages' branch and push it
-to the "push_to" remote.
+After each release, this plugin will extract the documentation directory from the tarball (defined by the 'extract' argument) to the 'gh-pages' branch and push it
+to the "push_to" remote. It will also add an "index.html" file, which simple redirects the user to the documentation file of the main module (using "redirect_prefix"
+parameter).
 
 =cut

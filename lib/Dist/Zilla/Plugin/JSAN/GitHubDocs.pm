@@ -6,11 +6,19 @@ use Moose;
 
 use Archive::Tar;
 use Git::Wrapper;
-use Try::Tiny;
-
+use File::Temp;
+use Path::Class;
+use Cwd qw(abs_path);
 
 with 'Dist::Zilla::Role::AfterRelease';
 with 'Dist::Zilla::Role::Git::DirtyFiles';
+
+
+has 'extract' => (
+    isa     => 'Str',
+    is      => 'rw',
+    default => 'doc/html'
+);
 
 
 has 'push_to' => (
@@ -20,39 +28,109 @@ has 'push_to' => (
 );
 
 
+has 'redirect_prefix' => (
+    isa     => 'Str',
+    is      => 'rw',
+    default => 'doc/html'
+);
+
+
+sub dist_name_as_url {
+    my ($self) = @_;
+    
+    return join '/', (split /-/, $self->zilla->name);
+}
+
 
 sub after_release {
     my ($self, $archive) = @_;
     
-    my @dirty_files = $self->list_dirty_files;
+    my $git             = Git::Wrapper->new('.');
+    my $gh_exists       = eval { $git->rev_parse( '--verify', '-q', 'gh-pages' ); 1; };
+    
+    
+    my @dirty_files = $self->list_dirty_files($git);
     
     if (@dirty_files) {
-        
         $self->log_fatal("There are dirty files in the repo: [ @dirty_files ] - can't update gh-pages branch"); 
     }
     
     $self->log("Updating `gh-pages` branch");
     
     
-    my $wrapper             = Git::Wrapper->new('.');
-    my $current_branch      = ($wrapper->name_rev( '--name-only', 'HEAD' ))[0];
+    # setting up the temporary git repo
+     
+    my $temp_dir        = File::Temp->newdir();
+    my $git_gh_pages    = Git::Wrapper->new( $temp_dir . '');
     
-    try {
-        $wrapper->checkout('gh-pages');
-    } catch {
-        $wrapper->checkout('-b', 'gh-pages');
-    };
+    $git_gh_pages->init('-q');
     
-    my $tar     = Archive::Tar->new($archive);
+    $git_gh_pages->remote('add', 'src', abs_path('.'));
+    $git_gh_pages->fetch(qw(-q src));
     
-    $tar->extract();
+    if ($gh_exists) {
+        $git_gh_pages->checkout('remotes/src/gh-pages');
+    } else {
+        $git_gh_pages->symbolic_ref('HEAD', 'refs/heads/gh-pages');
+        
+        my $index_file = file($temp_dir, 'index.html');
+        
+        my $fh = $index_file->openw();
+        
+        my $redirect_url    = $self->redirect_prefix . '/' . $self->dist_name_as_url . '.html';
+        
+        print $fh <<INDEX
+        
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="refresh" content="0;url=$redirect_url">
+    </head>
     
+    <body>
+    </body>
+</html>
+
+INDEX
+;
+        $fh->close();        
+    }
+
+
+    # exracting the relevant files from tarball 
     
-    $wrapper->commit('-a', -m => '`gh-pages` branch update');
+    my $extract = $self->extract;
+    $extract =~ s!^/!!;
     
-    $wrapper->push($self->push_to, 'gh-pages');
+    $extract = qr/^$extract/; 
     
-    $wrapper->checkout($current_branch);
+    my $next = Archive::Tar->iter($archive . '');
+    
+    while (my $file = $next->()) {
+        
+        my @extract_path = split '/', $file->full_path;
+        
+        shift @extract_path;
+        
+        my $extract_path = join '/', @extract_path;
+        
+        if ($extract_path =~ $extract) {
+            $file->extract( $temp_dir . '/' . $extract_path ) or warn "Extraction failed";    
+        }
+    }    
+
+    # pushing updates  
+    
+    $git_gh_pages->add('.');
+    $git_gh_pages->commit('-a', -m => '`gh-pages` branch update');
+    
+    if ($gh_exists) {
+        $git_gh_pages->checkout('-b', 'gh-pages');
+    } 
+    
+    $git_gh_pages->push('src', 'gh-pages');
+    
+    $git->push($self->push_to, 'gh-pages');
 }
 
 
@@ -68,7 +146,9 @@ no Moose;
 In your F<dist.ini>:
 
     [JSAN::GitHubDocs]
-    push_to     = origin            ; default value
+    extract             = doc/html         ; default value
+    redirect_prefix     = doc/html
+    push_to             = origin            ; default value
     
 
 =head1 DESCRIPTION

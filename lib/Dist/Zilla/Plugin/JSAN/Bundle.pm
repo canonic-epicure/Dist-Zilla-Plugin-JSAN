@@ -126,6 +126,9 @@ sub get_npm_root {
     
     $self->log('Trying to determine the `root` config setting of `npm`');
     
+    return $ENV{npm_config_root} if $ENV{npm_config_root};
+    
+    # deprecated
     return $ENV{JSANLIB} if $ENV{JSANLIB};
     
     my $exit_code;

@@ -3,19 +3,14 @@ package Dist::Zilla::Plugin::JSAN::GitHubDocs;
 # ABSTRACT: a plugin for Dist::Zilla which updates the 'gh-pages' branch after each release
 
 use Moose;
-use Moose::Autobox;
 
+use Archive::Tar;
+use Git::Wrapper;
+use Try::Tiny;
 
-use Path::Class;
 
 with 'Dist::Zilla::Role::AfterRelease';
-
-
-has 'extract' => (
-    isa     => 'Str',
-    is      => 'rw',
-    default => '/doc/html'
-);
+with 'Dist::Zilla::Role::Git::DirtyFiles';
 
 
 has 'push_to' => (
@@ -29,32 +24,35 @@ has 'push_to' => (
 sub after_release {
     my ($self, $archive) = @_;
     
+    my @dirty_files = $self->list_dirty_files;
+    
+    if (@dirty_files) {
+        
+        $self->log_fatal("There are dirty files in the repo: [ @dirty_files ] - can't update gh-pages branch"); 
+    }
+    
     $self->log("Updating `gh-pages` branch");
     
-    my $args  = shift;
-    my $src_dir = abs_path('.');
-
-    my $src   = Git::Wrapper->new($src_dir);
-    my $target_branch = _format_branch( $self->branch, $src );
-
-    my $exists = eval { $src->rev_parse( '--verify', '-q', $target_branch ); 1; };
-
-    eval {
-        my $build = Git::Wrapper->new( $args->{build_root} );
-        $build->init('-q');
-        $build->remote('add','src',$src_dir);
-        $build->fetch(qw(-q src));
-        if($exists){
-            $build->reset('--soft', "src/$target_branch");
-        }
-        $build->add('.');
-        $build->commit('-a', -m => _format_message($self->message, $src));
-        $build->checkout('-b',$target_branch);
-        $build->push('src', $target_branch);
+    
+    my $wrapper             = Git::Wrapper->new('.');
+    my $current_branch      = ($wrapper->name_rev( '--name-only', 'HEAD' ))[0];
+    
+    try {
+        $wrapper->checkout('gh-pages');
+    } catch {
+        $wrapper->checkout('-b', 'gh-pages');
     };
-    if (my $e = $@) {
-        $self->log_fatal("failed to commit build: $e");
-    }
+    
+    my $tar     = Archive::Tar->new($archive);
+    
+    $tar->extract();
+    
+    
+    $wrapper->commit('-a', -m => '`gh-pages` branch update');
+    
+    $wrapper->push($self->push_to, 'gh-pages');
+    
+    $wrapper->checkout($current_branch);
 }
 
 
@@ -70,14 +68,12 @@ no Moose;
 In your F<dist.ini>:
 
     [JSAN::GitHubDocs]
-    
-    extract     = /doc/html         ; default value
     push_to     = origin            ; default value
     
 
 =head1 DESCRIPTION
 
-After each release, this plugin extract the directory "extract" from the tarball and update the 'gh-pages' branch with it.
-It will then push the results to "push_to" config.
+After each release, this plugin will extract the content of tarball to the 'gh-pages' branch and push it
+to the "push_to" remote.
 
 =cut

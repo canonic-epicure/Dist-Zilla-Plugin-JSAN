@@ -9,6 +9,7 @@ use Git::Wrapper;
 use File::Temp;
 use Path::Class;
 use Cwd qw(abs_path);
+use Try::Tiny;
 
 with 'Dist::Zilla::Role::AfterRelease';
 with 'Dist::Zilla::Role::Git::DirtyFiles';
@@ -68,6 +69,7 @@ sub after_release {
     $git_gh_pages->remote('add', 'src', abs_path('.'));
     $git_gh_pages->fetch(qw(-q src));
     
+    
     if ($gh_exists) {
         $git_gh_pages->checkout('remotes/src/gh-pages');
     } else {
@@ -122,7 +124,12 @@ INDEX
     # pushing updates  
     
     $git_gh_pages->add('.');
-    $git_gh_pages->commit('-a', -m => '`gh-pages` branch update');
+    
+    try {
+        $git_gh_pages->commit('-m', '"gh-pages" branch update');
+    } catch {
+        # non-zero exit status if no files has been changed in docs
+    };
     
     if ($gh_exists) {
         $git_gh_pages->checkout('-b', 'gh-pages');
@@ -131,6 +138,8 @@ INDEX
     $git_gh_pages->push('src', 'gh-pages');
     
     $git->push($self->push_to, 'gh-pages');
+    
+    $self->log("`gh-pages` branch has been successfully updated");
 }
 
 

@@ -29,6 +29,7 @@ sub gather_files {
         name    => $self->filename,
         
         content => $self->fill_in_string(${$self->section_data('INSTALL')}, {
+            zilla   => \$zilla,
             dist    => \$zilla,
             plugin  => \$self
         })
@@ -45,7 +46,6 @@ sub dist_name {
     
     return $name;
 }
-
 
 
 __PACKAGE__->meta->make_immutable;
@@ -82,7 +82,7 @@ it requires the NodeJS to be installed.
 
 To install `npm` please follow the instructions on its site. After that, run:
 
-        > npm install {{ lc($plugin->dist_name) }}
+        > npm install {{ lc($zilla->name) }}
 
 Thats all, `npm` will download and install `{{ $plugin->dist_name }}` for you. 
 

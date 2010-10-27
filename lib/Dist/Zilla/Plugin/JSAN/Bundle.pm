@@ -124,6 +124,8 @@ sub get_component_content {
 sub get_npm_root {
     my ($self) = @_;
     
+    $self->log('Trying to determine the `root` config setting of `npm`');
+    
     return $ENV{JSANLIB} if $ENV{JSANLIB};
     
     my $exit_code;
@@ -134,13 +136,19 @@ sub get_npm_root {
         $exit_code = $? >> 8;
     };
     
+    chomp($stdout);
+    
     return $stdout unless $exit_code;
+    
+    $self->log('`npm config get root` failed, trying with [sudo]');
     
     ($stdout, $stderr) = capture {
         system('sudo npm config get root');
         
         $exit_code = $? >> 8;
     };
+    
+    chomp($stdout);
     
     return $stdout unless $exit_code;
     

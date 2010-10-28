@@ -9,7 +9,6 @@ use Git::Wrapper;
 use File::Temp;
 use Path::Class;
 use Cwd qw(abs_path);
-use Try::Tiny;
 
 with 'Dist::Zilla::Role::AfterRelease';
 with 'Dist::Zilla::Role::Git::DirtyFiles';
@@ -125,11 +124,10 @@ INDEX
     
     $git_gh_pages->add('.');
     
-    try {
+    # non-zero exit status if no files has been changed in docs
+    eval {
         $git_gh_pages->commit('-m', '"gh-pages" branch update');
-    } catch {
-        # non-zero exit status if no files has been changed in docs
-    };
+    }; 
     
     if ($gh_exists) {
         $git_gh_pages->checkout('-b', 'gh-pages');

@@ -14,6 +14,13 @@ use Path::Class;
 use Capture::Tiny qw/capture/;
 
 
+has 'npm_root' => (
+    isa     => 'Str',
+    is      => 'rw',
+);
+
+
+
 #================================================================================================================================================================================================================================================
 sub gather_files {
 }
@@ -124,12 +131,21 @@ sub get_component_content {
 sub get_npm_root {
     my ($self) = @_;
     
+    return $self->npm_root if $self->npm_root;
+    
     $self->log('Trying to determine the `root` config setting of `npm`');
     
-    return $ENV{npm_config_root} if $ENV{npm_config_root};
+    # JSANLIB is deprecated
+    my $root = $ENV{npm_config_root} || $ENV{JSANLIB};
     
-    # deprecated
-    return $ENV{JSANLIB} if $ENV{JSANLIB};
+    if ($root) {
+        
+        $self->npm_root($root);
+        
+        $self->log("Found: [$root]");
+        
+        return $self->npm_root;
+    };
     
     my $exit_code;
     
@@ -141,7 +157,13 @@ sub get_npm_root {
     
     chomp($stdout);
     
-    return $stdout unless $exit_code;
+    if (!$exit_code) {
+        $self->log("Found: [$stdout]");
+        
+        $self->npm_root($stdout);
+        
+        return $self->npm_root;
+    };
     
     $self->log('`npm config get root` failed, trying with [sudo]');
     
@@ -153,7 +175,13 @@ sub get_npm_root {
     
     chomp($stdout);
     
-    return $stdout unless $exit_code;
+    if (!$exit_code) {
+        $self->log("Found: [$stdout]");
+        
+        $self->npm_root($stdout);
+        
+        return $self->npm_root;
+    };
     
     die "Can't determine the `npm` root"; 
 }

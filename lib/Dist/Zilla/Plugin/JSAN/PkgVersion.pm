@@ -49,7 +49,7 @@ sub munge_files {
             
             $version = "'$version'" if $version !~ m/^\d+(\.\d+)?$/;
             
-            $content_copy =~ s!$overall_quoted!${whitespace}/*VERSION*/VERSION : ${version}${comma}!;
+            $content_copy =~ s!$overall_quoted!${whitespace}/*PKGVERSION*/VERSION : ${version}${comma}!;
         }
         
         $file->content($content_copy) if $content_copy ne $content;

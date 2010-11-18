@@ -138,6 +138,13 @@ has 'engine' => (
 );
 
 
+has 'bin' => (
+    is          => 'rw',
+    
+    default     => ''
+);
+
+
 
 #================================================================================================================================================================================================================================================
 sub gather_files {
@@ -167,6 +174,8 @@ sub gather_files {
             $package->{ scripts }   = {
                 "postactivate" => '$SHELL __script/postactivate.sh'
             };
+            
+            $package->{ bin }           = $self->bin if $self->bin;
                         
             return JSON->new->utf8(1)->pretty(1)->encode($package)
         }

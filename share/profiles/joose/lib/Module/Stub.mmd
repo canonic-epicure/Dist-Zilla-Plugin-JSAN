@@ -7,6 +7,30 @@ Name
 SYNOPSIS
 ========
 
+Setup for browsers (see [npm installation notes](http://joose.github.com/Joose/doc/html/Joose/Manual/Installation.html)):
+
+        <!-- Joose ->
+        <script type="text/javascript" src="/jsan/Task/Joose/Core.js"></script>    
+        
+            <!-- JooseX.Namespace.Depended - web-specific files only ->
+            <script type="text/javascript" src="/jsan/Task/JooseX/Namespace/Depended/Web.js"></script>
+
+            <!-- or ->
+            
+            <!-- JooseX.Namespace.Depended - cross-platform bundle ->
+            <script type="text/javascript" src="/jsan/Task/JooseX/Namespace/Depended/Auto.js"></script>
+
+        
+        <script type="text/javascript">
+            use.paths = [ 'lib', '/jsan' ]
+        </script>
+
+Setup for NodeJS:
+
+        // this extension is bundled into the following package
+        require('task-joose-nodejs')
+
+
         // declaring our class
         Class('{{ $plugin->dist_name }}', {
         

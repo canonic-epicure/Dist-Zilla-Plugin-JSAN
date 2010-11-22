@@ -2,6 +2,8 @@ Release history for Dist::Zilla::Plugin::JSAN
 
 {{$NEXT}}
 
+0.03      2010-11-22 13:43
+
         - don't try to load removed 'Dist::Zilla::Plugin::JSAN::Prereq' in tests
         - small docs update
 

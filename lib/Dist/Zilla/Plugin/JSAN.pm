@@ -297,13 +297,22 @@ allowing you to focus on the code itself.
 Any usual Dist::Zilla plugins can be used. In the SYNOPSIS above we've used L<Dist::Zilla::Plugin::Git::Check> and L<Dist::Zilla::Plugin::CheckChangesHasContent>.
 Additionally several JSAN-specific plugins were added:
 
+L<Dist::Zilla::Plugin::JSAN::Bundle> - concatenate individual source files into bundles, based on information from Components.JS file
+
+L<Dist::Zilla::Plugin::JSAN::StaticDir> - moves the content of the static directory to the distribution folder
+
+L<Dist::Zilla::Plugin::JSAN::GitHubDocs> - updates the `gh-pages` branch with the documentation after each release
+
+L<Dist::Zilla::Plugin::JSAN::NPM> - generate `package.json` file for your distribution
+
+L<Dist::Zilla::Plugin::JSAN::NPM::Publish> - publish your distribution in `npm`
+
+L<Dist::Zilla::Plugin::JSAN::PkgVersion> - embed version number in the source files
+
 L<Dist::Zilla::Plugin::JSAN::ReadmeFromMD> - copies a main documentation file to the distribution root as README.md 
 
 L<Dist::Zilla::Plugin::JSAN::InstallInstructions> - generates INSTALL file in the root of distribution with installation instructions
 
-L<Dist::Zilla::Plugin::JSAN::Bundle> - concatenate individual source files into bundles, based on information from Components.JS file
-
-L<Dist::Zilla::Plugin::JSAN::StaticDir> - moves the content of the static directory to the distribution folder
  
 
 

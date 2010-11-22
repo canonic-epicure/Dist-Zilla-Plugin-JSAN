@@ -2,6 +2,9 @@ Release history for Dist::Zilla::Plugin::JSAN
 
 {{$NEXT}}
 
+        - don't try to load removed 'Dist::Zilla::Plugin::JSAN::Prereq' in tests
+        - small docs update
+
 0.02      2010-11-15 14:19
 
         - switched to NPM only distribution

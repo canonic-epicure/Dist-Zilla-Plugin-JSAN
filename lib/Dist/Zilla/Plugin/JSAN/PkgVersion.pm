@@ -100,7 +100,7 @@ This plugin will replace the
     
     /*VERSION,*/ 
     
-placeholders with the distribution version. Replacement will be  
+placeholders with the distribution version.  
 
 
 =cut

@@ -53,6 +53,8 @@ __PACKAGE__->meta->make_immutable();
 
 In your F<dist.ini>:
 
+    name        = Sample-Dist
+    
     [JSAN::StaticDir]
     static_dir = static ; default
     
@@ -60,6 +62,14 @@ In your F<dist.ini>:
 =head1 DESCRIPTION
 
 This plugin will move the "static" directory of your distribution into the "lib" folder, under its
-distribution name. Please refer to L<Module::Build::JSAN::Installable> for details what is a "static" directory. 
+distribution name. That is, all files from the "static" directory, like:
+
+    /static/css/all.css
+    /static/image/logo.png
+
+will be moved to the:
+
+    /lib/Sample/Dist/static/css.all
+    /lib/Sample/Dist/static/image/logo.png
 
 =cut

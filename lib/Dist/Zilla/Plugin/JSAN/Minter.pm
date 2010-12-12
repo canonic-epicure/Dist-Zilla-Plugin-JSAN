@@ -100,17 +100,19 @@ Before you'll start creating distributions, setup the Dist::Zilla:
 It will ask you some basic info. When asking about the default license, here's the list 
 of available identificators (at the bottom and w/o leading "Software::License::"): L<Software::License>
 
-=head1 MODIFYING PROFILE
+=head1 CUSTOMIZING THE PROFILE
 
-Dist::Zilla stores profiles in the "~/.dzil/profiles/" directory. "~" denotes your home dir. [TODO: find where is it
-on windows] Each profile is a directory which should at least contain a "profile.ini" file, specifying the
+First you need to copy the default profile, which comes with this distribution to the "~/.dzil/profiles/" directory,
+where Dist::Zilla stores profiles. Probably the easiest way to do it will be to download the tarball of this distribution
+from L<http://search.cpan.org/dist/Dist-Zilla-Plugin-JSAN/>. Then unpack it and copy the "Dist-Zilla-Plugin-JSAN-0.xx/share/profiles/joose"
+directory to the "~/.dzil/profiles/my_profile". Then you can start a new distribution based on this profile with:
+
+    > dzil new -p my_profile Distribution-Name     
+
+Each profile is a directory which should at least contain a "profile.ini" file, specifying the
 plugins used during new distribution creation.
-
-Probably the easiest way to start a new profile will be to copy the default profile ("joose") and hack on it:
-L<http://cpansearch.perl.org/src/NPLATONOV/Dist-Zilla-Plugin-JSAN-0.01_02/share/profiles/joose/>
 
 JSAN::Minter will look for "lib/Module/Stub.*" files in the profile directory and process them as templates.
 The result of processing will be stored as "lib/Distribution/Name.*" (with the same extension).
-
 
 =cut

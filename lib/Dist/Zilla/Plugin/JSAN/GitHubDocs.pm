@@ -160,8 +160,16 @@ In your F<dist.ini>:
 
 =head1 DESCRIPTION
 
-After each release, this plugin will extract the documentation directory from the tarball (defined by the 'extract' argument) to the 'gh-pages' branch and push it
-to the "push_to" remote. It will also add an "index.html" file, which simple redirects the user to the documentation file of the main module (using "redirect_prefix"
-parameter).
+After release, this plugin will extract the documentation from the tarball, using the 'extract' parameter to the 'gh-pages' branch of your repo.
+Then it will push the updates to the "push_to" remote. 
+
+The documentation then will be available as
+
+    http://your_lowercased_github_user_name.github.com/Your-Dist-Name 
+
+The plugin will add the "index.html" file, which redirects the user from the link above to the documentation of the main module (using 'redirect_prefix'
+parameter):
+
+    http://your_lowercased_github_user_name.github.com/Your-Dist-Name/doc/html/Your/Dist/Name.html
 
 =cut

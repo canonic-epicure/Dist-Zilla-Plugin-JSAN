@@ -66,7 +66,7 @@ sub generate_docs_from_mmd {
     $self->extract_inlined_docs({
         html => sub {
             my ($comments, $content) = @_;
-            return (Text::MultiMarkdown::markdown("css: http://bit.ly/multi_markdown_style_css \n\n" . $comments, { document_format => 'Complete' }), 'html')
+            return (Text::MultiMarkdown::markdown("css: http://joose.it/markdown.css \n\n" . $comments, { document_format => 'Complete' }), 'html')
         },
         
         mmd => sub {

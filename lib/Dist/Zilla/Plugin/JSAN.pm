@@ -20,6 +20,13 @@ has 'docs_markup' => (
 );
 
 
+has 'css_url' =>  (
+    isa     => 'Str',
+    is      => 'rw',
+    default => 'http://joose.it/markdown.css'
+);
+
+
 #================================================================================================================================================================================================================================================
 sub build {
 }
@@ -63,10 +70,12 @@ sub generate_docs_from_mmd {
     
     require Text::MultiMarkdown;
     
+    my $css_url = $self->css_url;
+    
     $self->extract_inlined_docs({
         html => sub {
             my ($comments, $content) = @_;
-            return (Text::MultiMarkdown::markdown("css: http://joose.it/markdown.css \n\n" . $comments, { document_format => 'Complete' }), 'html')
+            return (Text::MultiMarkdown::markdown("css: $css_url \n\n" . $comments, { document_format => 'Complete' }), 'html')
         },
         
         mmd => sub {
@@ -246,6 +255,7 @@ In F<dist.ini>:
     
     [JSAN]                          ; generate docs
     docs_markup         = mmd       ; default
+    css_url             = http://joose.it/markdown.css  ; default
     
     [JSAN::StaticDir]
     static_dir          = static    ; default

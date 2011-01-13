@@ -7,30 +7,6 @@ Name
 SYNOPSIS
 ========
 
-Setup for browsers (see [npm installation notes](http://joose.github.com/Joose/doc/html/Joose/Manual/Installation.html)):
-
-        <!-- Joose ->
-        <script type="text/javascript" src="/jsan/Task/Joose/Core.js"></script>    
-        
-            <!-- JooseX.Namespace.Depended - web-specific files only ->
-            <script type="text/javascript" src="/jsan/Task/JooseX/Namespace/Depended/Web.js"></script>
-
-            <!-- or ->
-            
-            <!-- JooseX.Namespace.Depended - cross-platform bundle ->
-            <script type="text/javascript" src="/jsan/Task/JooseX/Namespace/Depended/Auto.js"></script>
-
-        
-        <script type="text/javascript">
-            use.paths = [ 'lib', '/jsan' ]
-        </script>
-
-Setup for NodeJS:
-
-        // this extension is bundled into the following package
-        require('task-joose-nodejs')
-
-
         // declaring our class
         Class('{{ $plugin->dist_name }}', {
         
@@ -45,6 +21,32 @@ Setup for NodeJS:
         
 
 If you are reading this file as README from github, you may want to open [this link](http://samuraijack.github.com/{{ $plugin->zilla->name }}) instead. 
+
+
+INSTALLATION
+============
+
+From `npm`:
+    
+    > [sudo] npm install {{ lc($plugin->zilla->name) }}
+
+Tarballs are available for downloading at: http://search.npmjs.org/#/{{ lc($plugin->zilla->name) }}
+
+
+SETUP
+=====
+
+In NodeJS:
+
+    require('task-joose-nodejs')
+    require('{{ lc($plugin->zilla->name) }}')
+    
+    
+In browsers (assuming you've completed the 3.1 item from this [document](http://joose.github.com/Joose/doc/html/Joose/Manual/Installation.html)):
+
+    <script type="text/javascript" src="/jsan/Task/Joose/Core.js"></script>
+    <script type="text/javascript" src="/jsan/Task/{{ join('/', split(/-/, $plugin->zilla->name)) }}/Core.js"></script>
+
 
 
 DESCRIPTION

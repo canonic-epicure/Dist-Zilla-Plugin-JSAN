@@ -2,6 +2,8 @@ Release history for Dist::Zilla::Plugin::JSAN
 
 {{$NEXT}}
 
+        - updated distribution template
+
 0.05      2011-01-12 18:14
 
         - changed the url of css file for docs converted from markdown and its now configurable

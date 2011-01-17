@@ -26,6 +26,16 @@ Harness.configure({
 
 
 Harness.start(
-    '010_sanity.t.js'
+    // test that module can be loaded using JooseX.Namespace.Depended
+    {
+        url         : '010_sanity.t.js',
+        preload     : [
+            'jsan:Task.Joose.Core',
+            'jsan:Task.JooseX.Namespace.Depended.Auto',
+            {
+                text : "use.paths = " + Harness.prepareINC(INC)
+            }
+        ]
+    }
 )
 

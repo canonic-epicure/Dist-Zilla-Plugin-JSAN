@@ -9,6 +9,7 @@ StartTest(function(t) {
         
         t.ok({{ $plugin->dist_name }}, "{{ $plugin->dist_name }} is here")
         
+        
         t.endAsync(async0)
         
         t.done()

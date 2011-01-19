@@ -1,5 +1,7 @@
 package Deployer::Image::PNG;
 
+# ABSTRACT: Thing wrapper around PNG image for size optimization
+
 use Moose;
 
 use Path::Class;
@@ -47,10 +49,8 @@ has 'use_quantization' => (
 );
 
 
-has 'bin_dir' => (
-    is => 'rw',
-     
-    required => 1
+has 'png_out_binary' => (
+    is => 'rw'
 );
 
 
@@ -78,7 +78,7 @@ sub optimize_lossless {
     my ($self) = @_;
     
     my $file        = $self->filename;
-    my $pngout      = dir($self->bin_dir)->file('pngout-static');     
+    my $pngout      = $self->png_out_binary;      
     
     qx!optipng -q -o3 $file!    if $self->use_optipng;   
     qx!$pngout -q -y $file!     if $self->use_pngout;

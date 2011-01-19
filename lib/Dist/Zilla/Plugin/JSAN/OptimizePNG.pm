@@ -5,7 +5,7 @@ package Dist::Zilla::Plugin::JSAN::OptimizePNG;
 use Moose;
 use Moose::Autobox;
 
-with 'Dist::Zilla::Role::BeforeBuild';
+with 'Dist::Zilla::Role::AfterBuild';
 
 use Deployer::Image::PNG;
 
@@ -21,7 +21,7 @@ sub mvp_aliases { return { dir => 'dirs' } }
 has dirs => (
     is   => 'ro',
     isa  => 'ArrayRef',
-    default => sub { [] },
+    default => sub { [ 'static/images' ] },
 );
 
 
@@ -70,19 +70,22 @@ has 'png_out_binary' => (
 
 
 #================================================================================================================================================================================================================================================
-sub before_build {
-    my ($self) = @_;
+sub after_build {
+    my ($self, $param) = @_;
     
     return if ($self->only_for_release && !$ENV{ DZIL_RELEASING });
+    
+    my $build_root = dir($param->{ build_root });
 
     my @png_files;
     
     foreach my $dir ($self->dirs->flatten) {
         push @png_files, File::Find::Rule->or(
             File::Find::Rule->file->name('*.png')
-        )->in($dir);
+        )->in($build_root->subdir($dir));
     }
     
+    my @log;
     
     foreach my $file (@png_files) {
         my $image = Deployer::Image::PNG->new({
@@ -102,9 +105,12 @@ sub before_build {
         
         my $after   = $image->get_size;
         
-        $self->log("File %100s: before=%7d, after=%7d, optimization=%.3f%%\n", $file, $before, $after, 100 * ($after - $before) / $before);
+        $file =~ /(.{0,30})$/;
+        
+        $self->log(sprintf("File %.30s: before =%7d, after =%7d, optimization = %.3f%%", $1, $before, $after, 100 * ($after - $before) / $before));
     }
     
+#    $self->log(@log);
 }
 
 
@@ -122,8 +128,8 @@ In your F<dist.ini>:
 
     [JSAN::OptimizePNG]
     
-    dir             = static/images/icons
-    dir             = static/images/backgrounds
+    dir             = lib/Dist/Name/static/images/icons     ; runs in "After Build" phase, so need to consider 
+    dir             = lib/Dist/Name/static/images/buttons   ; the effect of StaticDir plugin
     
     use_lossless            = 1    ;    default, use lossless optimizations
     use_quantization        = 1    ;    default, use quantization (with losses)

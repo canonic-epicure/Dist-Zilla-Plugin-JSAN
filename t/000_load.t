@@ -7,6 +7,7 @@ BEGIN {
 	use_ok( 'Dist::Zilla::Plugin::JSAN::Bundle' );
 	use_ok( 'Dist::Zilla::Plugin::JSAN::Minter' );
 	use_ok( 'Dist::Zilla::Plugin::JSAN::ReadmeFromMD' );
+	use_ok( 'Dist::Zilla::Plugin::JSAN::Shotenjin' );
 }
 
 done_testing;

@@ -87,6 +87,9 @@ sub after_build {
     
     my @log;
     
+    my $overall_before  = 0;
+    my $overall_after   = 0;
+    
     foreach my $file (@png_files) {
         my $image = Deployer::Image::PNG->new({
             filename                => $file,
@@ -100,17 +103,20 @@ sub after_build {
         });
         
         my $before  = $image->get_size;
+        $overall_before += $before;
         
         $image->optimize();
         
         my $after   = $image->get_size;
+        $overall_after += $after;
         
         $file =~ /(.{0,30})$/;
         
-        $self->log(sprintf("File %.30s: before =%7d, after =%7d, optimization = %.3f%%", $1, $before, $after, 100 * ($after - $before) / $before));
+        $self->log(sprintf("File %30.30s: before =%7d, after =%7d, optimization = %.3f%%", $1, $before, $after, 100 * ($after - $before) / $before));
     }
     
-#    $self->log(@log);
+    $self->log('Overall:');
+    $self->log(sprintf("     %30s  before =%7d, after =%7d, optimization = %.3f%%", '', $overall_before, $overall_after, 100 * ($overall_after - $overall_before) / $overall_before));
 }
 
 

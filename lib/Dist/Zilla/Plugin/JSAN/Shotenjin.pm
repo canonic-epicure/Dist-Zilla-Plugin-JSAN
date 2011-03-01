@@ -65,7 +65,7 @@ sub BUILDARGS {
     return {
         zilla           => $zilla,
         plugin_name     => $plugin_name,
-        process_list    => @params > 0 ? \@params : [ { regex => qr/^lib\b/, keep_whitespace => 0, cwd_as_base => 1 } ],
+        process_list    => @params > 0 ? \@params : [ { regex => qr/^lib\b/, keep_whitespace => 0, cwd_as_base => 0 } ],
     }
 }
 

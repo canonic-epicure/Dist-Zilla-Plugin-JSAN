@@ -20,6 +20,11 @@ has 'npm_root' => (
 );
 
 
+has 'roots_only_for_release' => (
+    is      => 'rw',
+    default => 1
+);
+
 
 #================================================================================================================================================================================================================================================
 sub gather_files {
@@ -42,8 +47,10 @@ sub munge_files {
     $components = $1;
 
     my $deploys = decode_json $components;
-    
-    $self->concatenate_for_task($deploys, 'all');
+
+    foreach my $deploy (keys(%$deploys)) {
+        $self->concatenate_for_task($deploys, $deploy);
+    }
 }
 
 
@@ -51,35 +58,41 @@ sub munge_files {
 sub concatenate_for_task {
     my ($self, $deploys, $task_name) = @_;
     
-    if ($task_name eq 'all') {
-    	
-    	foreach my $deploy (keys(%$deploys)) {
-    		$self->concatenate_for_task($deploys, $deploy);  	
-    	}
+    my @components = $self->expand_task_entry($deploys, $task_name);
+    die "No components in task: [$task_name]" unless @components > 0;
     
-    } else {
-	    my @components = $self->expand_task_entry($deploys, $task_name);
-	    die "No components in task: [$task_name]" unless @components > 0;
-	    
-	    my @dist_dirs = split /-/, $self->zilla->name;
-	    push @dist_dirs, $task_name;
-	    $dist_dirs[-1] .= '.js';
-	    
+    my @dist_dirs = split /-/, $self->zilla->name;
+    push @dist_dirs, $task_name;
+    $dist_dirs[-1] .= '.js';
+    
+    my $generate    = sub {
+        my $bundle_content = ''; 
+        
+        foreach my $comp (@components) {
+            $bundle_content .= $self->get_component_content($comp) . ";\n";
+        }
+        
+        return $bundle_content;
+    };
+    
+    $self->add_file(Dist::Zilla::File::FromCode->new({
+        
+        name => file('lib', 'Task', @dist_dirs) . '',
+        
+        code => $generate
+    }));
+    
+    if (!$self->roots_only_for_release || $ENV{ DZIL_RELEASING }) {
+    
+        my $root_file_name = join("-", 'task', map { lc } @dist_dirs);
+        
         $self->add_file(Dist::Zilla::File::FromCode->new({
             
-            name => file('lib', 'Task', @dist_dirs) . '',
+            name => file($root_file_name) . '',
             
-            code => sub {
-        	    my $bundle_content = ''; 
-        	    
-        	    foreach my $comp (@components) {
-        	        $bundle_content .= $self->get_component_content($comp) . ";\n";
-        	    }
-        	    
-        	    return $bundle_content;
-            }
+            code => $generate
         }));
-    };
+    }
 }
 
 
@@ -136,7 +149,7 @@ sub get_npm_root {
     $self->log('Trying to determine the `root` config setting of `npm`');
     
     # JSANLIB is deprecated
-    my $root = $ENV{npm_config_root} || $ENV{JSANLIB};
+    my $root = $ENV{npm_config_root} || $ENV{JSANLIB} || $ENV{JSAN_LIB};
     
     if ($root) {
         
@@ -268,6 +281,7 @@ All other entries denotes the javascript files from the "lib" directory. For exa
 as the content of the file "lib/KiokuJS/Reference.js"
 
 All bundles are stored as "lib/Task/Distribution/Name/BundleName.js", assuming the name of the distrubution is "Distribution-Name"
-and name of bundle - "BundleName".
+and name of bundle - "BundleName". During release, all bundles also gets added to the root of distribution as
+"task-distribution-name-bundlename.js". To enable the latter feature for regular builds add the `roots_only_for_release = 0` config option  
 
 =cut

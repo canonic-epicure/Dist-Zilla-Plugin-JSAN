@@ -2,6 +2,8 @@ Release history for Dist::Zilla::Plugin::JSAN
 
 {{$NEXT}}
 
+0.06      2011-07-15 19:07
+
         - adapted the `postinstall` script to npm 1.0
         - updated distribution template
 

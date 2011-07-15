@@ -11,7 +11,7 @@ use Dist::Zilla::File::FromCode;
 use JSON 2;
 use Path::Class;
 
-
+use File::ShareDir;
 
 
 has 'name' => (
@@ -172,7 +172,8 @@ sub gather_files {
             };            
             
             $package->{ scripts }   = {
-                "postactivate" => '$SHELL __script/postactivate.sh'
+                "postactivate"  => '$SHELL __script/postactivate.sh',
+                "postinstall"   => '$SHELL __script/postinstall.sh'
             };
             
             $package->{ bin }           = $self->bin if $self->bin;
@@ -181,21 +182,42 @@ sub gather_files {
         }
     }));
     
-    
+
+    # backward compat with npm 0.3    
     $self->add_file(Dist::Zilla::File::FromCode->new({
         
         name => file('__script/postactivate.sh') . '',
         
         code => sub {
             
-            return <<POSTACTIVATE
+            return <<'POSTACTIVATE'
 
-mkdir -p \$npm_config_root/.jsan
-cp -r ./lib/* \$npm_config_root/.jsan      
+mkdir -p $npm_config_root/.jsan
+cp -r ./lib/* $npm_config_root/.jsan      
 
 POSTACTIVATE
         }
     }));
+    
+    
+    $self->add_file(Dist::Zilla::File::FromCode->new({
+        name => file('__script/postinstall.sh') . '',
+        
+        code => sub {
+            return dir( File::ShareDir::dist_dir('Dist-Zilla-Plugin-JSAN') )->file('install_jsan.sh')->slurp;
+        }
+    }));
+    
+    
+    $self->add_file(Dist::Zilla::File::FromCode->new({
+        
+        name => file('__script/semver.js') . '',
+        
+        code => sub {
+            return dir( File::ShareDir::dist_dir('Dist-Zilla-Plugin-JSAN') )->file('semver.js')->slurp;
+        }
+    }));
+    
 }
 
 

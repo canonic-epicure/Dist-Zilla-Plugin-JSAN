@@ -148,8 +148,7 @@ sub get_npm_root {
     
     $self->log('Trying to determine the `root` config setting of `npm`');
     
-    # JSANLIB is deprecated
-    my $root = $ENV{npm_config_root} || $ENV{JSANLIB} || $ENV{JSAN_LIB};
+    my $root = $ENV{npm_config_root};
     
     if ($root) {
         
@@ -163,7 +162,7 @@ sub get_npm_root {
     my $exit_code;
     
     my ($stdout, $stderr) = capture {
-        system('npm config get root');
+        system('npm root -g');
         
         $exit_code = $? >> 8;
     };

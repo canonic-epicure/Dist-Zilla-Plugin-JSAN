@@ -173,7 +173,8 @@ sub gather_files {
             
             $package->{ scripts }   = {
                 "postactivate"  => '$SHELL __script/postactivate.sh',
-                "postinstall"   => '$SHELL __script/postinstall.sh'
+                "postinstall"   => '$SHELL __script/postinstall.sh',
+                "preinstall"    => '$SHELL __script/preinstall.sh'
             };
             
             $package->{ bin }           = $self->bin if $self->bin;
@@ -201,10 +202,19 @@ POSTACTIVATE
     
     
     $self->add_file(Dist::Zilla::File::FromCode->new({
+        name => file('__script/preinstall.sh') . '',
+        
+        code => sub {
+            return dir( File::ShareDir::dist_dir('Dist-Zilla-Plugin-JSAN') )->file('preinstall.sh')->slurp;
+        }
+    }));
+
+
+    $self->add_file(Dist::Zilla::File::FromCode->new({
         name => file('__script/postinstall.sh') . '',
         
         code => sub {
-            return dir( File::ShareDir::dist_dir('Dist-Zilla-Plugin-JSAN') )->file('install_jsan.sh')->slurp;
+            return dir( File::ShareDir::dist_dir('Dist-Zilla-Plugin-JSAN') )->file('postinstall.sh')->slurp;
         }
     }));
     

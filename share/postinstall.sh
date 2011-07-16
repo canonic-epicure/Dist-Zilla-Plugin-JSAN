@@ -17,6 +17,8 @@ fi
 
 echo "Current npm root: $NPM_ROOT"
 
+echo "PREFIX: $NPM_PREFIX"
+
 
 print_key() {
 	CONTENT=$(cat $1)

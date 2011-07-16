@@ -1,23 +1,16 @@
 #!/bin/bash
 
-#PODNAME: install_jsan.sh
+#PODNAME: postinstall.sh
 
-if [ "$NPM_ROOT" == "" ] 
-then
-	
-	ROOT=$(npm root 2>/dev/null)
-	
-	if [ "$(npm config get global 2>/dev/null)" == "true" ] 
-	then
-	    export NPM_ROOT="$ROOT"
-	else
-		export NPM_ROOT=$(readlink -m "$ROOT/../..")
-	fi
-fi
+NPM_ROOT=$(pwd)
+NPM_ROOT=$(readlink -m "$NPM_ROOT/..")
 
-echo "Current npm root: $NPM_ROOT"
+until [ ! -d "$NPM_ROOT/../../.jsan" ] 
+do
+	NPM_ROOT=$(readlink -m "$NPM_ROOT/../..")
+done
 
-echo "PREFIX: $NPM_PREFIX"
+echo "Top-level npm root: $NPM_ROOT"
 
 
 print_key() {
@@ -60,9 +53,6 @@ then
 fi
 
 echo "Installing $DIST_NAME to .jsan"
-
-mkdir -p "$NPM_ROOT/.jsan"
-mkdir -p "$NPM_ROOT/.jsanver"
 
 cp -r ./lib/* "$NPM_ROOT/.jsan"      
 cp -r ./package.json $DIST_VER_FILE

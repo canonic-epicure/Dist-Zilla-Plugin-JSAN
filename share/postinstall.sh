@@ -52,7 +52,7 @@ then
 	
 fi
 
-echo "Installing $DIST_NAME to .jsan"
+echo "Copying $DIST_NAME to $NPM_ROOT/.jsan"
 
 cp -r ./lib/* "$NPM_ROOT/.jsan"      
 cp -r ./package.json $DIST_VER_FILE
